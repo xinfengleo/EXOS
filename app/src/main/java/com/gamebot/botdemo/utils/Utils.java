@@ -18,7 +18,6 @@ public class Utils {
         return Integer.valueOf(obj.toString().replace(".0", ""));
     }
 
-
     public static int pointXConver(int y) {
         return 719 - y;
     }
