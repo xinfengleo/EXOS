@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:background="@color/title_backColor"
+                    android:text="出售物品"
+                    android:padding="5dp"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="開始時間："
+                        app:defaultValue="false"
+                        app:uniqueKey="出售物品" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="出售物品開始時間" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="檢查頻率："
+                        app:defaultValue="false"
+                        app:uniqueKey="出售物品檢查頻率" />
+                    <com.gamebot.botdemo.view.SpinnerExd
+                        style="?android:spinnerStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textColor="#fff"
+                        app:defaultIndex="0"
+                        app:listArray="@string/frequentStr"
+                        app:uniqueKey="出售物品檢查頻率類型"
+                        app:valueFromList="true" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="出售物品定時間隔時長" />
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="分鐘"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="物品："
+                        app:defaultValue="false"
+                        app:uniqueKey="出售物品1" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="出售物品名1" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="數量："
+                        />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="出售物品1數量" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="    "
+                        />
+                    <com.gamebot.botdemo.view.SpinnerExd
+                        style="?android:spinnerStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textColor="#fff"
+                        app:defaultIndex="0"
+                        app:listArray="擺攤"
+                        app:uniqueKey="出售物品1出售方式"
+                        app:valueFromList="true" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="物品："
+                        app:defaultValue="false"
+                        app:uniqueKey="出售物品2" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="出售物品名2" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="數量："
+                        />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="出售物品2數量" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="    "
+                        />
+                    <com.gamebot.botdemo.view.SpinnerExd
+                        style="?android:spinnerStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textColor="#fff"
+                        app:defaultIndex="0"
+                        app:listArray="擺攤"
+                        app:uniqueKey="出售物品2出售方式"
+                        app:valueFromList="true" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="物品："
+                        app:defaultValue="false"
+                        app:uniqueKey="出售物品3" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="出售物品名3" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="數量："
+                        />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="出售物品3數量" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="    "
+                        />
+                    <com.gamebot.botdemo.view.SpinnerExd
+                        style="?android:spinnerStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textColor="#fff"
+                        app:defaultIndex="0"
+                        app:listArray="擺攤"
+                        app:uniqueKey="出售物品3出售方式"
+                        app:valueFromList="true" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:background="@color/title_backColor"
+                    android:text="交易所搶購"
+                    android:padding="5dp"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="開始時間："
+                        app:defaultValue="false"
+                        app:uniqueKey="搶購物品" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="搶購物品開始時間" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="檢查頻率："
+                        app:defaultValue="false"
+                        app:uniqueKey="搶購物品檢查頻率" />
+                    <com.gamebot.botdemo.view.SpinnerExd
+                        style="?android:spinnerStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textColor="#fff"
+                        app:defaultIndex="0"
+                        app:listArray="@string/frequentStr"
+                        app:uniqueKey="搶購物品檢查頻率類型"
+                        app:valueFromList="true" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="搶購物品定時間隔時長" />
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="分鐘"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="物品："
+                        app:defaultValue="false"
+                        app:uniqueKey="搶購物品1" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="搶購物品名1" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="數量："
+                        />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="搶購物品1數量" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="    "
+                        />
+                    <com.gamebot.botdemo.view.SpinnerExd
+                        style="?android:spinnerStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textColor="#fff"
+                        app:defaultIndex="0"
+                        app:listArray="擺攤"
+                        app:uniqueKey="搶購物品1出售方式"
+                        app:valueFromList="true" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="物品："
+                        app:defaultValue="false"
+                        app:uniqueKey="搶購物品2" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="搶購物品名2" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="數量："
+                        />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="搶購物品2數量" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="    "
+                        />
+                    <com.gamebot.botdemo.view.SpinnerExd
+                        style="?android:spinnerStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textColor="#fff"
+                        app:defaultIndex="0"
+                        app:listArray="擺攤"
+                        app:uniqueKey="搶購物品2出售方式"
+                        app:valueFromList="true" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="物品："
+                        app:defaultValue="false"
+                        app:uniqueKey="搶購物品3" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="搶購物品名3" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="數量："
+                        />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="搶購物品3數量" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="    "
+                        />
+                    <com.gamebot.botdemo.view.SpinnerExd
+                        style="?android:spinnerStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textColor="#fff"
+                        app:defaultIndex="0"
+                        app:listArray="擺攤"
+                        app:uniqueKey="搶購物品3出售方式"
+                        app:valueFromList="true" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="銀幣少於"
+                        app:defaultValue="false"
+                        app:uniqueKey="搶購物品3" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:hint="      "
+                        app:uniqueKey="搶購物品銀幣限制" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="    停止拍賣"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+    </ScrollView>
+
+</LinearLayout>

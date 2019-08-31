@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr format="string" name="uniqueKey"/>
+    <attr format="integer" name="defaultIndex"/>
+    <attr format="boolean" name="valueFromList"/>
+    <attr format="string" name="listArray"/>
+    <declare-styleable name="SpinnerExd">
+        <attr name="defaultIndex"/>
+        <attr name="uniqueKey"/>
+        <attr name="valueFromList"/>
+        <attr name="listArray"/>
+    </declare-styleable>
+
+    <declare-styleable name="RadioGroupExd">
+        <attr name="defaultIndex"/>
+        <attr name="uniqueKey"/>
+        <attr name="valueFromList"/>
+        <attr name="listArray"/>
+    </declare-styleable>
+
+</resources>

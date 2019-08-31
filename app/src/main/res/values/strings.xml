@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">七大罪特工</string>
+    <string name="initialize_failed">初始化失敗，請稍候再試。</string>
+    <string name="help_text1">
+        特工官網：https://ai.igcps.com
+        \n
+        \n支持口袋雲手機掛機，不需要自己手機root和越獄，IOS和安卓都可以使用。掛機時自己手機可以做任何事情，甚至關機都不影響雲手機24H在線掛機，不耗電、不消耗記憶體，拒絕手機卡頓發燙！
+        \n口袋雲官網：http://www.pockm.com/
+        \n模擬器掛機推薦雷電模擬器，模擬器設置要求：
+        \n分辨率：720*1280\u3000\u3000dpi：320
+        \n　\u3000cpu：4\u3000\u3000\u3000\u3000　記憶體：4096
+        \n可參照下圖設置：
+    </string>
+    <string name="frequentStr">定時間隔</string>
+    <string name="alert">註：如果是新號執行主線、支線等任務，請務必勾選此功能，根據需要設定時間，避免誤判導致無任務的情況。</string>
+    <string name="shaneStr">注：賞善罰惡前十次正常獲得獎勵，選中后會以隊員模式多刷二十次獲得情義值，此功能可替代賞善罰惡任務</string>
+
+</resources>

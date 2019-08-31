@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:background="@color/title_backColor"
+                    android:text="全局設定"
+                    android:padding="5dp"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="已勾選任務執行完畢後"
+                        app:defaultValue="false"
+                        app:uniqueKey="循環掛機" />
+
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:hint="        "
+                        app:defaultText="0"
+                        app:uniqueKey="角色循環間隔" />
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="分鐘，重新執行一次"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="16dp">
+                    <com.gamebot.botdemo.view.RadioGroupExd
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:defaultIndex="0"
+                        app:listArray="當前角色重新執行,換角色重新執行"
+                        app:uniqueKey="循環掛機模式" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/alert"
+                    android:textColor="@color/yellow"
+                    android:textSize="13dp"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        app:defaultValue="false"
+                        app:uniqueKey="遊戲重啟" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:hint="        "
+                        app:uniqueKey="遊戲重啟時長" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="分鐘後重啟遊戲"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="零點重置"
+                        app:defaultValue="false"
+                        app:uniqueKey="零點重置" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="6dp">
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        app:defaultValue="true"
+                        app:uniqueKey="防止卡頓" />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        app:defaultText="0"
+                        android:hint="        "
+                        app:uniqueKey="防止卡頓時間" />
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="分鐘後無操作，進行下個任務"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+    </ScrollView>
+
+</LinearLayout>
