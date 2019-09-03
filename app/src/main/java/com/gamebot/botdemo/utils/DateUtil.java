@@ -357,6 +357,13 @@ public class DateUtil {
         return minute;
     }
 
+    public static int getSecond(){
+        Time t=new Time(); // or Time t=new Time("GMT+8"); 加上Time Zone资料
+        t.setToNow(); // 取得系统时间。
+        int second = t.second;    // 0-59
+        return second;
+    }
+
     public static void main(String[] args) {
         System.out.println(getWeekOfDate(new Date()));
     }

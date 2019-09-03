@@ -1,24 +1,17 @@
 package com.gamebot.botdemo.script;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.util.Log;
 import com.gamebot.botdemo.R;
 import com.gamebot.botdemo.entity.TaskAction;
 import com.gamebot.botdemo.entity.UnitAction;
 import com.gamebot.botdemo.entity.UnitCallback;
-import com.gamebot.botdemo.entity.UnitNameFun;
-import com.gamebot.botdemo.utils.CommonUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Date;
-import java.util.Random;
 
 import com.gamebot.botdemo.utils.DateUtil;
-import com.gamebot.botdemo.utils.FileUtils;
+import com.gamebot.botdemo.utils.TimingUtil;
 import com.gamebot.sdk.preference.*;
 import com.topjohnwu.superuser.Shell;
 
@@ -28,7 +21,7 @@ public class ScriptThread extends SuperScriptThread {
 
 
     private TaskAction g_taskAction,刷初始_taskAction,每日抽_taskAction,一鑽石抽_taskAction,郵件領取_taskAction,成就領取_taskAction,送友情點_taskAction
-            ,友情點買藥_taskAction;
+            ,友情點買藥_taskAction,金幣本_taskAction;
     private boolean 刷初始_開關 = SettingPreference.getBoolean("刷初始開關",false);
     private boolean 使用引繼碼_開關 = SettingPreference.getBoolean("使用引繼碼",false);
     private boolean 每日免費抽_開關 = SettingPreference.getBoolean("每日免費抽",false);
@@ -37,10 +30,14 @@ public class ScriptThread extends SuperScriptThread {
     private boolean 成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
     private boolean 贈送友情點_開關 = SettingPreference.getBoolean("贈送友情點數",false);
     private boolean 友情點買藥_開關 = SettingPreference.getBoolean("友情點買體力",false);
+    private boolean 金幣本_開關 = SettingPreference.getBoolean("金幣本",false);
+    private boolean 材料本_開關 = SettingPreference.getBoolean("材料本",false);
 
     private boolean 抽獎完成 = false,检查个数完成 = false,密碼設置成功 = false,引繼碼賬號輸入完成 = false,引繼碼密碼輸入完成 = false
-            ,引繼成功 = false,斷線等待 = false,任務重置_開關 = true,無鑽石領 = false;
-    private int 抽卡個數 = 0,實際個數 = 0;
+            ,引繼成功 = false,斷線等待 = false,任務重置_開關 = true,MAX選中 = false, 隊伍選中 = false;
+    private boolean 金幣本68 = false,金幣本1113 = false,金幣本1921 = false,金幣本自動降級 = false,材料本自動降級 = false;
+    private boolean 等待體力回復 = false;
+
     private String 抽卡個數Str = String.valueOf((SettingPreference.getInt("抽卡個數", 0)));
     private String 保存遊戲名 = SettingPreference.getString("保存遊戲名","").replace(" ","");
     private String 保存密碼 = SettingPreference.getString("保存密碼","").replace(" ","");
@@ -48,8 +45,14 @@ public class ScriptThread extends SuperScriptThread {
     private String 引繼密碼 = SettingPreference.getString("引繼碼密碼","").replace(" ","");
     private String 斷線等待時長 = SettingPreference.getString("斷線等待時長","").replace(" ","");
     private String 卡死重啟時長 = SettingPreference.getString("卡死重啟時長","").replace(" ","");
+    private String 金幣本挑戰等級 = SettingPreference.getString("金幣本等級","").replace(" ","");
+    private String 金幣本挑戰隊伍 = SettingPreference.getString("金幣本選隊伍","").replace(" ","");
+    private String 金幣本買藥 = SettingPreference.getString("金幣本體力使用","").replace(" ","");
+    private String 材料本類型 = SettingPreference.getString("材料本類型","").replace(" ","");
+    private String 材料本挑戰等級 = SettingPreference.getString("材料本等級","").replace(" ","");
     private String oldRGB = "";
 
+    private int 抽卡個數 = 0,實際個數 = 0;
     private int 重置任務時間 = 0,斷線重連時長 = 0,每日抽計數 = 3,郵件選擇類型計數 = 3;
 
     private long 斷線等待時間 = 0,t_卡死重啟 = 0,卡死重啟剩餘時間 = 0;
@@ -468,7 +471,6 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 成就領取_開關 = false;
-                無鑽石領 = false;
                 return true;
             }
 
@@ -481,7 +483,6 @@ public class ScriptThread extends SuperScriptThread {
         taskAction.addLayerAction("成就獎勵鑽石頁面",new UnitAction("返回", new UnitCallback() {
             @Override
             public boolean before() {
-                無鑽石領 = true;
                 return true;
             }
 
@@ -517,6 +518,10 @@ public class ScriptThread extends SuperScriptThread {
         return taskAction;
     }
 
+    /**
+     * 友情點換體力藥
+     * @return
+     */
     private TaskAction initYouQingDianMaiYao(){
         TaskAction taskAction = new TaskAction();
         taskAction.addLayerAction("城鎮頁面","打開商店");
@@ -526,7 +531,55 @@ public class ScriptThread extends SuperScriptThread {
         taskAction.addLayerAction("彩幣兌換頁面","友情點兌換");
         taskAction.addLayerAction("金幣兌換頁面","友情點兌換");
         taskAction.addLayerAction("銀幣兌換頁面","友情點兌換");
-//        taskAction.addLayerAction("友情幣兌換頁面","");
+        taskAction.addLayerAction("友情幣兌換頁面","選中體力藥",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                友情點買藥_開關 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("友情點換物頁面",new UnitAction("交換", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return true;
+            }
+
+            @Override
+            public void after() {
+                MAX選中 = false;
+            }
+        }), new UnitAction("MAX", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if(MAX選中){
+                    return false;
+                }else {
+                    return true;
+                }
+            }
+
+            @Override
+            public void after() {
+                MAX選中 = true;
+            }
+        }),"選友情點",new UnitAction("關閉", new UnitCallback() {
+            @Override
+            public boolean before() {
+                MAX選中 = false;
+                友情點買藥_開關 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
         return taskAction;
     }
 
@@ -679,6 +732,702 @@ public class ScriptThread extends SuperScriptThread {
         g_taskAction.addLayerAction("故事頁面","返回");
         g_taskAction.addLayerAction("日常任務頁面","返回");
         g_taskAction.addLayerAction("酒館頁面","清算营业");
+        g_taskAction.addLayerAction("戰鬥內頁面","返回");
+        g_taskAction.addLayerAction("副本頁面","金幣本獎勵領取","返回");
+        g_taskAction.addLayerAction("副本選關頁面","返回");
+        g_taskAction.addLayerAction("戰鬥準備頁面","返回");
+        g_taskAction.addLayerAction("入場體力不足頁面","取消");
+        g_taskAction.addLayerAction("使用體力藥頁面","關閉");
+        g_taskAction.addLayerAction("鑽石買體力頁面","關閉");
+        g_taskAction.addLayerAction("通關成功頁面","ok");
+        g_taskAction.addLayerAction("通關失敗頁面","ok");
+        g_taskAction.addLayerAction("已獲得獎勵頁面","確認");
+    }
+
+    /**
+     * 金幣本操作
+     * @return
+     */
+    private TaskAction initJinBiBen68(){
+        TaskAction taskAction = new TaskAction();
+        taskAction.addLayerAction("城鎮頁面","打開戰鬥",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本68 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("酒館頁面","清算营业","打開戰鬥",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本68 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("戰鬥內頁面","打開副本");
+        taskAction.addLayerAction("副本頁面","金幣本",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本68 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("副本選關頁面",金幣本挑戰等級);
+        taskAction.addLayerAction("戰鬥準備頁面",new UnitAction(金幣本挑戰隊伍, new UnitCallback() {
+            @Override
+            public boolean before() {
+                隊伍選中 = true;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("下一隊", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (隊伍選中){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"start");
+        taskAction.addLayerAction("入場體力不足頁面",new UnitAction("取消", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("停止任務")){
+                    金幣本68 = false;
+                    return true;
+                }else if (金幣本買藥.equals("等待回復體力")){
+                    等待體力回復 = true;
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("確定", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("用體力藥")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("使用體力藥頁面", new UnitAction("使用", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("用體力藥")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("關閉", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本68 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("鑽石買體力頁面",new UnitAction("關閉", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本68 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("戰鬥頁面","AUTO","等待");
+        taskAction.addLayerAction("通關成功頁面","ok");
+        taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if(金幣本自動降級) {
+                    if (金幣本挑戰等級.equals("第六階")) {
+                        金幣本挑戰等級 = "第五階";
+                    } else if (金幣本挑戰等級.equals("第五階")) {
+                        金幣本挑戰等級 = "第四階";
+                    } else if (金幣本挑戰等級.equals("第四階")) {
+                        金幣本挑戰等級 = "第三階";
+                    } else if (金幣本挑戰等級.equals("第三階")) {
+                        金幣本挑戰等級 = "第二階";
+                    } else if (金幣本挑戰等級.equals("第二階")) {
+                        金幣本挑戰等級 = "第一階";
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public void after() {
+            }
+        }));
+        taskAction.addLayerAction("已獲得獎勵頁面","確認");
+        return taskAction;
+    }
+    private TaskAction initJinBiBen1113(){
+        TaskAction taskAction = new TaskAction();
+        taskAction.addLayerAction("城鎮頁面","打開戰鬥",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1113 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("酒館頁面","清算营业","打開戰鬥",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1113 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("戰鬥內頁面","打開副本");
+        taskAction.addLayerAction("副本頁面","金幣本",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1113 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("副本選關頁面",金幣本挑戰等級);
+        taskAction.addLayerAction("戰鬥準備頁面",new UnitAction(金幣本挑戰隊伍, new UnitCallback() {
+            @Override
+            public boolean before() {
+                隊伍選中 = true;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("下一隊", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (隊伍選中){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"start");
+        taskAction.addLayerAction("入場體力不足頁面",new UnitAction("取消", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("停止任務")){
+                    金幣本1113 = false;
+                    return true;
+                }else if (金幣本買藥.equals("等待回復體力")){
+                    等待體力回復 = true;
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("確定", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("用體力藥")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("使用體力藥頁面", new UnitAction("使用", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("用體力藥")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("關閉", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1113 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("鑽石買體力頁面",new UnitAction("關閉", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1113 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("戰鬥頁面","AUTO","等待");
+        taskAction.addLayerAction("通關成功頁面","ok");
+        taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if(金幣本自動降級) {
+                    if (金幣本挑戰等級.equals("第六階")) {
+                        金幣本挑戰等級 = "第五階";
+                    } else if (金幣本挑戰等級.equals("第五階")) {
+                        金幣本挑戰等級 = "第四階";
+                    } else if (金幣本挑戰等級.equals("第四階")) {
+                        金幣本挑戰等級 = "第三階";
+                    } else if (金幣本挑戰等級.equals("第三階")) {
+                        金幣本挑戰等級 = "第二階";
+                    } else if (金幣本挑戰等級.equals("第二階")) {
+                        金幣本挑戰等級 = "第一階";
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public void after() {
+            }
+        }));
+        taskAction.addLayerAction("已獲得獎勵頁面","確認");
+        return taskAction;
+    }
+    private TaskAction initJinBiBen1921(){
+        TaskAction taskAction = new TaskAction();
+        taskAction.addLayerAction("城鎮頁面","打開戰鬥",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1921 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("酒館頁面","清算营业","打開戰鬥",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1921 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("戰鬥內頁面","打開副本");
+        taskAction.addLayerAction("副本頁面","金幣本",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1921 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("副本選關頁面",金幣本挑戰等級);
+        taskAction.addLayerAction("戰鬥準備頁面",new UnitAction(金幣本挑戰隊伍, new UnitCallback() {
+            @Override
+            public boolean before() {
+                隊伍選中 = true;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("下一隊", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (隊伍選中){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"start");
+        taskAction.addLayerAction("入場體力不足頁面",new UnitAction("取消", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("停止任務")){
+                    金幣本1921 = false;
+                    return true;
+                }else if (金幣本買藥.equals("等待回復體力")){
+                    等待體力回復 = true;
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("確定", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("用體力藥")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("使用體力藥頁面", new UnitAction("使用", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("用體力藥")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("關閉", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1921 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("鑽石買體力頁面",new UnitAction("關閉", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1921 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("戰鬥頁面","AUTO","等待");
+        taskAction.addLayerAction("通關成功頁面","ok");
+        taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if(金幣本自動降級) {
+                    if (金幣本挑戰等級.equals("第六階")) {
+                        金幣本挑戰等級 = "第五階";
+                    } else if (金幣本挑戰等級.equals("第五階")) {
+                        金幣本挑戰等級 = "第四階";
+                    } else if (金幣本挑戰等級.equals("第四階")) {
+                        金幣本挑戰等級 = "第三階";
+                    } else if (金幣本挑戰等級.equals("第三階")) {
+                        金幣本挑戰等級 = "第二階";
+                    } else if (金幣本挑戰等級.equals("第二階")) {
+                        金幣本挑戰等級 = "第一階";
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public void after() {
+            }
+        }));
+        taskAction.addLayerAction("已獲得獎勵頁面","確認");
+        return taskAction;
+    }
+
+    /**
+     * 材料本操作
+     * @return
+     */
+    private TaskAction initCaiLiaoBen(){
+        TaskAction taskAction = new TaskAction();
+        taskAction.addLayerAction("城鎮頁面","打開戰鬥",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                材料本_開關 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("酒館頁面","清算营业","打開戰鬥",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                材料本_開關 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("戰鬥內頁面","打開副本");
+        taskAction.addLayerAction("副本頁面","材料本",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                材料本_開關 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("副本選關頁面",材料本挑戰等級,new UnitAction(材料本類型, new UnitCallback() {
+            @Override
+            public boolean before() {
+                return true;
+            }
+
+            @Override
+            public void after() {
+                if(材料本類型.equals("強化")){
+                    swipe(292,497,311,379,2000);
+                }else if (材料本類型.equals("金幣")){
+                    swipe(306,670,318,386,2000);
+                }else{
+                    swipe(340,839,358,380,2000);
+                }
+            }
+        }),"等待");
+        taskAction.addLayerAction("戰鬥準備頁面",new UnitAction(金幣本挑戰隊伍, new UnitCallback() {
+            @Override
+            public boolean before() {
+                隊伍選中 = true;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("下一隊", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (隊伍選中){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"start");
+        taskAction.addLayerAction("入場體力不足頁面",new UnitAction("取消", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("停止任務")){
+                    金幣本1921 = false;
+                    return true;
+                }else if (金幣本買藥.equals("等待回復體力")){
+                    等待體力回復 = true;
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("確定", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("用體力藥")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("使用體力藥頁面", new UnitAction("使用", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (金幣本買藥.equals("用體力藥")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("關閉", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1921 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("鑽石買體力頁面",new UnitAction("關閉", new UnitCallback() {
+            @Override
+            public boolean before() {
+                金幣本1921 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("戰鬥頁面","AUTO","等待");
+        taskAction.addLayerAction("通關成功頁面","ok");
+        taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if(金幣本自動降級) {
+                    if (金幣本挑戰等級.equals("第六階")) {
+                        金幣本挑戰等級 = "第五階";
+                    } else if (金幣本挑戰等級.equals("第五階")) {
+                        金幣本挑戰等級 = "第四階";
+                    } else if (金幣本挑戰等級.equals("第四階")) {
+                        金幣本挑戰等級 = "第三階";
+                    } else if (金幣本挑戰等級.equals("第三階")) {
+                        金幣本挑戰等級 = "第二階";
+                    } else if (金幣本挑戰等級.equals("第二階")) {
+                        金幣本挑戰等級 = "第一階";
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public void after() {
+            }
+        }));
+        taskAction.addLayerAction("已獲得獎勵頁面","確認");
+        return taskAction;
     }
 
     /**
@@ -732,6 +1481,15 @@ public class ScriptThread extends SuperScriptThread {
             卡死重啟剩餘時間 = 5 * 60 * 1000;
         }else{
             卡死重啟剩餘時間 = Integer.parseInt(卡死重啟時長) * 60 * 1000;
+        }
+        if (金幣本_開關){
+            金幣本68 = SettingPreference.getBoolean("金幣本6-8點",false);
+            金幣本1113 = SettingPreference.getBoolean("金幣本11-13點",false);
+            金幣本1921 = SettingPreference.getBoolean("金幣本19-21點",false);
+            金幣本自動降級 = SettingPreference.getBoolean("金幣本智能降階",false);
+        }
+        if (材料本_開關){
+            材料本自動降級 = SettingPreference.getBoolean("材料本智能降階",false);
         }
     }
 
@@ -796,6 +1554,18 @@ public class ScriptThread extends SuperScriptThread {
                     }else if (友情點買藥_開關){
                         curTaskAction = 友情點買藥_taskAction;
                         showHUDInfo("友情點買藥");
+                    }else if (金幣本_開關 && 金幣本68 && TimingUtil.betweenHour(5,7)) {
+                        curTaskAction = initJinBiBen68();
+                        showHUDInfo("金幣本");
+                    }else if (金幣本_開關 && 金幣本1113 && TimingUtil.betweenHour(10,12)){
+                        curTaskAction = initJinBiBen1113();
+                        showHUDInfo("金幣本");
+                    }else if (金幣本_開關 && 金幣本1921 && TimingUtil.betweenHour(18,20)){
+                        curTaskAction = initJinBiBen1921();
+                        showHUDInfo("金幣本");
+                    }else if (材料本_開關){
+                        curTaskAction = initCaiLiaoBen();
+                        showHUDInfo("材料本");
                     }else{
                         showHUDInfo("暫無任務");
                     }
@@ -810,11 +1580,14 @@ public class ScriptThread extends SuperScriptThread {
                     }
                 }
 
-                if (任務重置_開關 && DateUtil.getHour() - 重置任務時間 == 0 && DateUtil.getHour() == 0){
-                    任務重置_開關 = false;
-                    killApp(gamePkg);
-                    resetMission();
-                }
+//                if (任務重置_開關 && TimingUtil.timingByHour(重置任務時間)){
+//                    任務重置_開關 = false;
+//                    killApp(gamePkg);
+//                    resetMission();
+//                }
+//                if (!任務重置_開關 && DateUtil.getHour() == 0){
+//                    任務重置_開關 = true;
+//                }
 
                 /**********************************畫面超時不動重啟遊戲****************************************/
                 String newRGB = getPixelColor(16,307);
@@ -839,7 +1612,7 @@ public class ScriptThread extends SuperScriptThread {
                         卡死重啟剩餘時間 = Integer.parseInt(卡死重啟時長) * 60 * 1000;
                     }
                 }
-
+                Log.e(getTag(), "run: " + 材料本挑戰等級 + 材料本類型);
                 Log.e(getTag(), "run:" + curLayerName);
                 showMOVEInfo(curLayerName + "-" + getUnitName());
                 if (execTask(curLayerName,curTaskAction)) {
