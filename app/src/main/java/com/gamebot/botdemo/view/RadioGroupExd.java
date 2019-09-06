@@ -49,7 +49,25 @@ public class RadioGroupExd extends RadioGroup implements BotControl {
                 addView(radioButton);
             }
         }
+
+        setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                Log.e("TAG", "XcheckId" + i);
+            }
+        });
         var3.recycle();
+    }
+
+    @Override
+    public void setOnCheckedChangeListener(OnCheckedChangeListener listener) {
+        super.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int index=indexOfChild(findViewById(getCheckedRadioButtonId()));
+                listener.onCheckedChanged(radioGroup,index);
+            }
+        });
     }
 
     @Override
@@ -69,5 +87,9 @@ public class RadioGroupExd extends RadioGroup implements BotControl {
     public void save() {
         int index=this.indexOfChild(this.findViewById(this.getCheckedRadioButtonId()));
         SettingPreference.putInt(this.mUniqueKey,index);
+    }
+
+    public int getIndex(){
+        return this.indexOfChild(this.findViewById(this.getCheckedRadioButtonId()));
     }
 }

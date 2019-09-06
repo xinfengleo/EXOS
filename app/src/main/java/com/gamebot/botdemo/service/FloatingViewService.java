@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 
 import com.fauth.library.core.AuthService;
 import com.fauth.library.entity.AuthResult;
@@ -21,6 +22,7 @@ import com.gamebot.botdemo.script.ScriptThread;
 import com.gamebot.botdemo.utils.ConsoleHelper;
 import com.gamebot.botdemo.utils.FileUtils;
 import com.gamebot.botdemo.utils.HUDManage;
+import com.gamebot.botdemo.view.RadioGroupExd;
 import com.gamebot.botdemo.view.SpinnerExd;
 import com.gamebot.sdk.client.BaseScriptThread;
 import com.gamebot.sdk.preference.SettingPreference;
@@ -42,6 +44,9 @@ import org.json.JSONObject;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 
 public class FloatingViewService extends BaseFloatingViewService implements BaseScriptThread.ScriptServiceListener,View.OnClickListener{
 
@@ -60,18 +65,94 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
     private String 使用卡號 = "";
     private FloatingViewService self;
     private View tap1View,tab2View,tap3View,tabMainView;
+    private RadioGroupExd selectShuatu;
+    private LinearLayout qianghuaben,jinhuaben,zhuangbeirenwu,bosszhan;
 
     @Override
     protected void createSettingView(LayoutInflater layoutInflater) {
         tabMainView = layoutInflater.inflate(R.layout.setting_main, null);
         tap1View = layoutInflater.inflate(R.layout.setting_tab_one, null);
         tab2View = layoutInflater.inflate(R.layout.setting_tab_two, null);
+        tap3View = layoutInflater.inflate(R.layout.setting_tab_three, null);
 //        tap3View = layoutInflater.inflate(R.layout.setting_tab4, null);
         addView("使用說明", tabMainView);
         addView("刷初始", tap1View);
         addView("日常", tab2View);
+        addView("掛機",tap3View);
 //        addView("全局設定", tap3View);
 //        tap1View.findViewById(R.id.btn_new_setting).setOnClickListener(this);
+        selectShuatu = tap3View.findViewById(R.id.select_shuatu);
+        qianghuaben = tap3View.findViewById(R.id.qianghuaben);
+        jinhuaben = tap3View.findViewById(R.id.jinhuaben);
+        zhuangbeirenwu = tap3View.findViewById(R.id.zhuangbeirenwu);
+        bosszhan = tap3View.findViewById(R.id.BOSSzhan);
+        initEven();
+    }
+
+    private void initEven(){
+        switch (selectShuatu.getIndex()){
+            case 0:
+                qianghuaben.setVisibility(VISIBLE);
+                jinhuaben.setVisibility(GONE);
+                zhuangbeirenwu.setVisibility(GONE);
+                bosszhan.setVisibility(GONE);
+                break;
+            case 1:
+                qianghuaben.setVisibility(GONE);
+                jinhuaben.setVisibility(VISIBLE);
+                zhuangbeirenwu.setVisibility(GONE);
+                bosszhan.setVisibility(GONE);
+                break;
+            case 2:
+                qianghuaben.setVisibility(GONE);
+                jinhuaben.setVisibility(GONE);
+                zhuangbeirenwu.setVisibility(VISIBLE);
+                bosszhan.setVisibility(GONE);
+                break;
+            case 3:
+                qianghuaben.setVisibility(GONE);
+                jinhuaben.setVisibility(GONE);
+                zhuangbeirenwu.setVisibility(GONE);
+                bosszhan.setVisibility(VISIBLE);
+                break;
+            default:
+                qianghuaben.setVisibility(VISIBLE);
+                jinhuaben.setVisibility(GONE);
+                zhuangbeirenwu.setVisibility(GONE);
+                bosszhan.setVisibility(GONE);
+                break;
+        }
+        selectShuatu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i){
+                    case 0:
+                        qianghuaben.setVisibility(VISIBLE);
+                        jinhuaben.setVisibility(GONE);
+                        zhuangbeirenwu.setVisibility(GONE);
+                        bosszhan.setVisibility(GONE);
+                        break;
+                    case 1:
+                        qianghuaben.setVisibility(GONE);
+                        jinhuaben.setVisibility(VISIBLE);
+                        zhuangbeirenwu.setVisibility(GONE);
+                        bosszhan.setVisibility(GONE);
+                        break;
+                    case 2:
+                        qianghuaben.setVisibility(GONE);
+                        jinhuaben.setVisibility(GONE);
+                        zhuangbeirenwu.setVisibility(VISIBLE);
+                        bosszhan.setVisibility(GONE);
+                        break;
+                    case 3:
+                        qianghuaben.setVisibility(GONE);
+                        jinhuaben.setVisibility(GONE);
+                        zhuangbeirenwu.setVisibility(GONE);
+                        bosszhan.setVisibility(VISIBLE);
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -497,7 +578,7 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
                                 new Handler(getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        settingWindow.setVisibility(View.VISIBLE);
+                                        settingWindow.setVisibility(VISIBLE);
                                     }
                                 });
                                 break;
