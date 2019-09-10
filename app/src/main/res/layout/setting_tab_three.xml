@@ -140,7 +140,7 @@
                             android:layout_height="30dp"
                             android:textColor="#fff"
                             app:defaultIndex="0"
-                            app:listArray="用體力藥,停止任務,等待回復體力"
+                            app:listArray="用體力藥,等待回復體力"
                             app:uniqueKey="強化本體力使用"
                             app:valueFromList="true" />
                     </LinearLayout>
@@ -239,7 +239,7 @@
                             android:layout_height="30dp"
                             android:textColor="#fff"
                             app:defaultIndex="0"
-                            app:listArray="用體力藥,停止任務,等待回復體力"
+                            app:listArray="用體力藥,等待回復體力"
                             app:uniqueKey="進化本體力使用"
                             app:valueFromList="true" />
                     </LinearLayout>
@@ -338,7 +338,7 @@
                             android:layout_height="30dp"
                             android:textColor="#fff"
                             app:defaultIndex="0"
-                            app:listArray="用體力藥,停止任務,等待回復體力"
+                            app:listArray="用體力藥,等待回復體力"
                             app:uniqueKey="裝備任務體力使用"
                             app:valueFromList="true" />
                     </LinearLayout>
@@ -380,7 +380,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="#fff"
                                 app:defaultIndex="0"
-                                app:listArray="巴尼亞村,達瑪麗鎮,塔拉,貝塞爾鎮,奧登村"
+                                app:listArray="夢幻激戰,無法者之岩,水晶洞窟,紅色大地,山神之森"
                                 app:uniqueKey="BOSS戰村莊"
                                 app:valueFromList="true" />
                         </LinearLayout>
@@ -402,7 +402,7 @@
                             android:layout_height="30dp"
                             android:textColor="#fff"
                             app:defaultIndex="0"
-                            app:listArray="Normal,Hard,Extreme"
+                            app:listArray="normal,hard,extreme"
                             app:uniqueKey="BOSS戰選等級"
                             app:valueFromList="true" />
                     </LinearLayout>
@@ -444,8 +444,8 @@
                             android:layout_height="30dp"
                             android:textColor="#fff"
                             app:defaultIndex="0"
-                            app:listArray="用體力藥,停止任務,等待回復體力"
-                            app:uniqueKey="強化本體力使用"
+                            app:listArray="用體力藥,等待回復體力"
+                            app:uniqueKey="BOSS戰體力使用"
                             app:valueFromList="true" />
                     </LinearLayout>
                     <LinearLayout
