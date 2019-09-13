@@ -6,7 +6,7 @@ public class TimingUtil {
      * 超過一個時間點后執行
      */
     public static boolean timingByHour(int Hour){
-        if (DateUtil.getHour() >= Hour){
+        if (DateUtil.getHour() >= Hour && DateUtil.getHour() < Hour + 1){
             return true;
         }
         return false;

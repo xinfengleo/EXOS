@@ -5,7 +5,9 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fauth.library.core.AuthService;
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     AuthService authService;
     private boolean consoleStop = false;
     private LoadDialog loadDialog;
+    private RelativeLayout rlMain;
     private boolean flag = false;
 
     @Override
@@ -82,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
         checkScreenWH();
         authService=AuthService.getInstance();
         loadDialog = new LoadDialog(MainActivity.this, R.style.MyDialogStyle);
+        rlMain = (RelativeLayout)findViewById(R.id.rl_main);
+        checkOrientation();
         checkVersion();
         MobclickAgent.onProfileSignIn(authService.getDevId());
     }
@@ -94,6 +100,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void checkOrientation(){
+        Configuration mConfiguration = this.getResources().getConfiguration(); //获取设置的配置信息
+        int ori = mConfiguration.orientation; //获取屏幕方向
+        if (ori == mConfiguration.ORIENTATION_LANDSCAPE) {
+            //横屏
+            rlMain.setBackgroundResource(R.drawable.gdlmg_logo_h);
+        } else if (ori == mConfiguration.ORIENTATION_PORTRAIT) {
+            //竖屏
+            rlMain.setBackgroundResource(R.drawable.gdlmg_logo_v);
+        }
+    }
 
     public void checkVersion() {
 

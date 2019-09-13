@@ -8,6 +8,10 @@ import com.gamebot.botdemo.entity.TaskAction;
 import com.gamebot.botdemo.entity.UnitAction;
 import com.gamebot.botdemo.entity.UnitCallback;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
 
 import com.gamebot.botdemo.utils.DateUtil;
@@ -20,7 +24,7 @@ public class ScriptThread extends SuperScriptThread {
     private final static String gamePkg="com.netmarble.nanatsunotaizai";
 
 
-    private TaskAction g_taskAction;
+    private TaskAction g_taskAction,fenJieZhuangBeiTaskAction;
     private boolean 刷初始_開關 = SettingPreference.getBoolean("刷初始開關",false);
     private boolean 使用引繼碼_開關 = SettingPreference.getBoolean("使用引繼碼",false);
     private boolean 每日免費抽_開關 = SettingPreference.getBoolean("每日免費抽",false);
@@ -34,6 +38,14 @@ public class ScriptThread extends SuperScriptThread {
     private boolean 村莊好感度_開關 = SettingPreference.getBoolean("村莊好感度",false);
     private boolean 半自動主線_開關 = SettingPreference.getBoolean("半自動主線",false);
     private boolean 每日任務_開關 = SettingPreference.getBoolean("每日任務",false);
+    private boolean 騎士團祈禱 = SettingPreference.getBoolean("騎士團祈禱",false);
+    private boolean 夢幻激戰 = SettingPreference.getBoolean("BOSS戰夢幻激戰",false);
+    private boolean 無法者之岩 = SettingPreference.getBoolean("BOSS戰無法者之岩",false);
+    private boolean 水晶洞窟 = SettingPreference.getBoolean("BOSS戰水晶洞窟",false);
+    private boolean 紅色大地 = SettingPreference.getBoolean("BOSS戰紅色大地",false);
+    private boolean 山神之森 = SettingPreference.getBoolean("BOSS戰山神之森",false);
+    private boolean 墮落根源 = SettingPreference.getBoolean("BOSS戰墮落的根源",false);
+    private boolean 裝備分解_開關 = false,裝備選定 = true;
 
     private boolean 抽獎完成 = false,检查个数完成 = false,密碼設置成功 = false,引繼碼賬號輸入完成 = false,引繼碼密碼輸入完成 = false
             ,引繼成功 = false,斷線等待 = false,任務重置_開關 = true,MAX選中 = false, 隊伍選中 = false,滿好感度 = false,自動編隊 = false;
@@ -41,7 +53,8 @@ public class ScriptThread extends SuperScriptThread {
     private boolean 等待體力回復 = false,通關完成 = false,買食材選好村莊 = false,肉塊購買 = false,野菜購買 = false,料理完成 = false,主線自動編成 = false;
     private boolean easy任務 = false,normal任務 = false,hard任務 = false,刷食材 = false,購買食材_開關 = false;
     private boolean 日常材料本_開關 = false,日常普通本_開關 = false,日常強化任務_開關 = false,日常製作料理_開關 = false,日常BOSS戰_開關 = false,日常PVP戰鬥_開關 = false;
-    private boolean BOSS戰山神之森 = true,BOSS戰紅色大地 = true,BOSS戰水晶洞窟 = true,BOSS戰無法者之岩 = true,BOSS戰夢幻激戰 = true,BOSS戰extreme = true,BOSS戰hard = true,BOSS戰normal = true,戰力不足 = false;
+    private boolean BOSS戰墮落根源 = true,BOSS戰山神之森 = true,BOSS戰紅色大地 = true,BOSS戰水晶洞窟 = true,BOSS戰無法者之岩 = true,BOSS戰夢幻激戰 = true,BOSS戰extreme = true,BOSS戰hard = true,BOSS戰normal = true,戰力不足 = false;
+    private boolean 刷裝備完成一次 = false,殲滅戰發生 = false;
 
     private String 抽卡個數Str = String.valueOf((SettingPreference.getInt("抽卡個數", 0)));
     private String 保存遊戲名 = SettingPreference.getString("保存遊戲名","").replace(" ","");
@@ -64,6 +77,8 @@ public class ScriptThread extends SuperScriptThread {
     private String 掛機刷圖模式 = String.valueOf(SettingPreference.getInt("掛機刷圖",0));
     private String 強化本等級 = SettingPreference.getString("強化本等級","");
     private String 進化本等級 = SettingPreference.getString("進化本等級","");
+    private String 刷裝備類型 = SettingPreference.getString("裝備任務類型","");
+    private String BOSS戰等級 = SettingPreference.getString("BOSS戰選等級","");
     private String oldRGB = "";
 
     private int 抽卡個數 = 0,實際個數 = 0;
@@ -89,6 +104,7 @@ public class ScriptThread extends SuperScriptThread {
     private void initTaskAction() {
         initColorAction(false);
         initGongGong();
+        initFenJieZhuangBei();
     }
 
     /**
@@ -381,7 +397,6 @@ public class ScriptThread extends SuperScriptThread {
             }
         }),"等待");
         taskAction.addLayerAction("裝備抽取頁面","每日一抽","返回");
-        taskAction.addLayerAction("未知頁面","ok","廣告ok","等待");
         taskAction.addLayerAction("鑰匙拉動頁面",new UnitAction("等待", new UnitCallback() {
             @Override
             public boolean before() {
@@ -401,7 +416,6 @@ public class ScriptThread extends SuperScriptThread {
         taskAction.addLayerAction("金幣兌換頁面","可領","返回");
         taskAction.addLayerAction("銀幣兌換頁面","可領","返回");
         taskAction.addLayerAction("友情幣兌換頁面","可領","返回");
-
         return taskAction;
     }
 
@@ -627,6 +641,52 @@ public class ScriptThread extends SuperScriptThread {
     }
 
     /**
+     * 騎士團祈禱
+     * @return
+     */
+    private TaskAction initQiShiTuanQiDao(){
+        TaskAction taskAction = new TaskAction();
+        taskAction.addLayerAction("城鎮頁面","打開騎士團",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                騎士團祈禱 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("酒館頁面","清算营业","打開騎士團",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                騎士團祈禱 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("騎士團聊天頁面","進入騎士團");
+        taskAction.addLayerAction("騎士團內頁面","祈禱",new UnitAction("返回酒館", new UnitCallback() {
+            @Override
+            public boolean before() {
+                騎士團祈禱 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        return taskAction;
+    }
+
+    /**
      * 金幣本操作
      * @return
      */
@@ -768,7 +828,7 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("戰鬥頁面","AUTO","等待");
+        taskAction.addLayerAction("戰鬥頁面","AUTO");
         taskAction.addLayerAction("通關成功頁面","ok");
         taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
             @Override
@@ -934,7 +994,7 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("戰鬥頁面","AUTO","等待");
+        taskAction.addLayerAction("戰鬥頁面","AUTO");
         taskAction.addLayerAction("通關成功頁面","ok");
         taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
             @Override
@@ -1100,7 +1160,7 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("戰鬥頁面","AUTO","等待");
+        taskAction.addLayerAction("戰鬥頁面","AUTO");
         taskAction.addLayerAction("通關成功頁面","ok");
         taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
             @Override
@@ -1287,7 +1347,7 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("戰鬥頁面","AUTO","等待");
+        taskAction.addLayerAction("戰鬥頁面","AUTO");
         taskAction.addLayerAction("通關成功頁面","ok");
         taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
             @Override
@@ -2417,10 +2477,26 @@ public class ScriptThread extends SuperScriptThread {
         }));
         taskAction.addLayerAction("戰鬥內頁面","打開BOSS戰");
         taskAction.addLayerAction("BOSS戰選關頁面",
+                new UnitAction("墮落根源", new UnitCallback() {
+                    @Override
+                    public boolean before() {
+                        if (BOSS戰山神之森){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    public void after() {
+
+                    }
+                }),
                 new UnitAction("山神之森", new UnitCallback() {
             @Override
             public boolean before() {
                 if (BOSS戰山神之森){
+                    BOSS戰墮落根源 = false;
                     return true;
                 }else{
                     return false;
@@ -2437,6 +2513,7 @@ public class ScriptThread extends SuperScriptThread {
             public boolean before() {
                 if (BOSS戰紅色大地){
                     BOSS戰山神之森 = false;
+                    BOSS戰墮落根源 = false;
                     return true;
                 }else{
                     return false;
@@ -2451,6 +2528,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (BOSS戰水晶洞窟){
+                    BOSS戰墮落根源 = false;
                     BOSS戰山神之森 = false;
                     BOSS戰紅色大地 = false;
                     return true;
@@ -2467,6 +2545,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (BOSS戰無法者之岩){
+                    BOSS戰墮落根源 = false;
                     BOSS戰山神之森 = false;
                     BOSS戰紅色大地 = false;
                     BOSS戰水晶洞窟 = false;
@@ -2484,6 +2563,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (BOSS戰夢幻激戰){
+                    BOSS戰墮落根源 = false;
                     BOSS戰山神之森 = false;
                     BOSS戰紅色大地 = false;
                     BOSS戰水晶洞窟 = false;
@@ -2566,20 +2646,24 @@ public class ScriptThread extends SuperScriptThread {
                 new UnitAction("返回", new UnitCallback() {
                     @Override
                     public boolean before() {
-                        if (BOSS戰山神之森){
-                            BOSS戰山神之森 = false;
-                        }else{
-                            if (BOSS戰紅色大地){
-                                BOSS戰紅色大地 = false;
-                            }else{
-                                if (BOSS戰水晶洞窟){
-                                    BOSS戰水晶洞窟 = false;
-                                }else{
-                                    if (BOSS戰無法者之岩){
-                                        BOSS戰無法者之岩 = false;
-                                    }else{
-                                        if (BOSS戰夢幻激戰){
-                                            BOSS戰夢幻激戰 = false;
+                        if (BOSS戰墮落根源){
+                            BOSS戰墮落根源 = false;
+                        }else {
+                            if (BOSS戰山神之森) {
+                                BOSS戰山神之森 = false;
+                            } else {
+                                if (BOSS戰紅色大地) {
+                                    BOSS戰紅色大地 = false;
+                                } else {
+                                    if (BOSS戰水晶洞窟) {
+                                        BOSS戰水晶洞窟 = false;
+                                    } else {
+                                        if (BOSS戰無法者之岩) {
+                                            BOSS戰無法者之岩 = false;
+                                        } else {
+                                            if (BOSS戰夢幻激戰) {
+                                                BOSS戰夢幻激戰 = false;
+                                            }
                                         }
                                     }
                                 }
@@ -3116,13 +3200,190 @@ public class ScriptThread extends SuperScriptThread {
         return taskAction;
     }
 
-
+    /**
+     * 刷圖裝備
+     * @return
+     */
     private TaskAction initShuaTuZhuangBei(){
         TaskAction taskAction = new TaskAction();
+        taskAction.addLayerAction("城鎮頁面","打開戰鬥",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return true;
+            }
 
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("酒館頁面","清算营业","打開戰鬥",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("戰鬥內頁面","打開裝備副本");
+        taskAction.addLayerAction("刷裝備選擇頁面",刷裝備類型,"領取","開始",new UnitAction("前往", new UnitCallback() {
+            @Override
+            public boolean before() {
+                刷裝備完成一次 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                掛機刷圖模式 = "-1";
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("副本選關頁面",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (刷裝備完成一次){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"hard","normal","返回");
+        taskAction.addLayerAction("戰鬥準備頁面",new UnitAction(SettingPreference.getString("裝備任務選隊伍",""), new UnitCallback() {
+            @Override
+            public boolean before() {
+                隊伍選中 = true;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("下一隊", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (隊伍選中){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"start","返回");
+        taskAction.addLayerAction("入場體力不足頁面",new UnitAction("取消", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getString("裝備任務體力使用","").equals("等待回復體力")){
+                    等待體力回復 = true;
+                    t_體力回復 = System.currentTimeMillis();
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("確定", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getString("裝備任務體力使用","").equals("用體力藥")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("使用體力藥頁面", new UnitAction("使用", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getString("裝備任務體力使用","").equals("用體力藥")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"關閉");
+        taskAction.addLayerAction("鑽石買體力頁面","關閉");
+        taskAction.addLayerAction("戰鬥頁面","AUTO","等待");
+        taskAction.addLayerAction("通關成功頁面",new UnitAction("ok", new UnitCallback() {
+            @Override
+            public boolean before() {
+                刷裝備完成一次 = true;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if(SettingPreference.getBoolean("裝備任務失敗降類型",false)) {
+                    if (刷裝備類型.equals("回復")) {
+                        刷裝備類型 = "心眼";
+                    } else if (刷裝備類型.equals("心眼")) {
+                        刷裝備類型 = "集中";
+                    }else if (刷裝備類型.equals("集中")) {
+                        刷裝備類型 = "生命";
+                    }else if (刷裝備類型.equals("生命")) {
+                        刷裝備類型 = "鐵壁";
+                    }else if (刷裝備類型.equals("鐵壁")) {
+                        刷裝備類型 = "猛攻";
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public void after() {
+            }
+        }));
+        taskAction.addLayerAction("已獲得獎勵頁面","確認");
         return taskAction;
     }
 
+    /**
+     * 刷圖BOSS戰
+     * @return
+     */
     private TaskAction initShuaTuBOSSZhan(){
         TaskAction taskAction = new TaskAction();
         taskAction.addLayerAction("城鎮頁面","打開戰鬥",new UnitAction("等待", new UnitCallback() {
@@ -3150,8 +3411,203 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         taskAction.addLayerAction("戰鬥內頁面","打開BOSS戰");
-        taskAction.addLayerAction("BOSS戰選關頁面",SettingPreference.getString("BOSS戰村莊",""),"返回");
-        taskAction.addLayerAction("副本選關頁面", SettingPreference.getString("BOSS戰選等級",""),"返回");
+        taskAction.addLayerAction("BOSS戰選關頁面",new UnitAction("夢幻激戰紅", new UnitCallback() {
+            @Override
+            public boolean before() {
+                夢幻激戰 = false;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("無法者之岩紅", new UnitCallback() {
+            @Override
+            public boolean before() {
+                無法者之岩 = false;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("水晶洞窟紅", new UnitCallback() {
+            @Override
+            public boolean before() {
+                水晶洞窟 = false;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("紅色大地紅", new UnitCallback() {
+            @Override
+            public boolean before() {
+                紅色大地 = false;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("山神之森紅", new UnitCallback() {
+            @Override
+            public boolean before() {
+                山神之森 = false;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("墮落根源紅", new UnitCallback() {
+            @Override
+            public boolean before() {
+                墮落根源 = false;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("夢幻激戰", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (夢幻激戰){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("無法者之岩", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (無法者之岩){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+                夢幻激戰 = false;
+            }
+        }),new UnitAction("水晶洞窟", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (水晶洞窟){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+                夢幻激戰 = false;
+                無法者之岩 = false;
+            }
+        }),new UnitAction("紅色大地", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (紅色大地){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+                夢幻激戰 = false;
+                無法者之岩 = false;
+                水晶洞窟 = false;
+            }
+        }),new UnitAction("山神之森", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (山神之森){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+                夢幻激戰 = false;
+                無法者之岩 = false;
+                水晶洞窟 = false;
+                紅色大地 = false;
+            }
+        }),new UnitAction("墮落根源", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (墮落根源){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+                夢幻激戰 = false;
+                無法者之岩 = false;
+                水晶洞窟 = false;
+                紅色大地 = false;
+                山神之森 = false;
+            }
+        }),"返回");
+        taskAction.addLayerAction("副本選關頁面", new UnitAction("殲滅戰發生", new UnitCallback() {
+            @Override
+            public boolean before() {
+                殲滅戰發生 = true;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction(BOSS戰等級, new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (殲滅戰發生){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return true;
+            }
+
+            @Override
+            public void after() {
+                殲滅戰發生 = false;
+            }
+        }));
         taskAction.addLayerAction("戰鬥準備頁面",new UnitAction(SettingPreference.getString("BOSS戰選隊伍",""), new UnitCallback() {
             @Override
             public boolean before() {
@@ -3231,10 +3687,10 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if(SettingPreference.getBoolean("BOSS戰智能降階",false)) {
-                    if (進化本等級.equals("extreme")) {
-                        進化本等級 = "hard";
-                    } else if (進化本等級.equals("hard")) {
-                        進化本等級 = "normal";
+                    if (BOSS戰等級.equals("extreme")) {
+                        BOSS戰等級 = "hard";
+                    } else if (BOSS戰等級.equals("hard")) {
+                        BOSS戰等級 = "normal";
                     }
                 }
                 return true;
@@ -3253,6 +3709,21 @@ public class ScriptThread extends SuperScriptThread {
      */
     private void initGongGong(){
         g_taskAction = new TaskAction();
+        g_taskAction.addLayerAction("裝備擴容頁面",new UnitAction("關閉", new UnitCallback() {
+            @Override
+            public boolean before() {
+                裝備分解_開關 = true;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        g_taskAction.addLayerAction("郵件頁面","關閉");
+        g_taskAction.addLayerAction("大招跳過頁面","skip");
+        g_taskAction.addLayerAction("好友頁面","返回");
         g_taskAction.addLayerAction("城鎮對話頁面","skip");
         g_taskAction.addLayerAction("劇情頁面","skip");
         g_taskAction.addLayerAction("對話頁面","自動","等待");
@@ -3403,7 +3874,7 @@ public class ScriptThread extends SuperScriptThread {
         g_taskAction.addLayerAction("日常獎勵頁面","領取");
         g_taskAction.addLayerAction("一次獎勵頁面","領取");
         g_taskAction.addLayerAction("更新頁面","確定");
-        g_taskAction.addLayerAction("未知頁面","ok","ok1","確認","廣告ok","等待");
+        g_taskAction.addLayerAction("未知頁面","取消","以後再說","ok","ok1","確認","廣告ok","等待");
         g_taskAction.addLayerAction("卡列表頁面","返回");
         g_taskAction.addLayerAction("設置頁面","返回");
         g_taskAction.addLayerAction("世界頁面","返回");
@@ -3436,7 +3907,6 @@ public class ScriptThread extends SuperScriptThread {
         g_taskAction.addLayerAction("章節故事頁面","返回");
         g_taskAction.addLayerAction("對話接任務頁面","領取");
         g_taskAction.addLayerAction("彈框接任務頁面","關閉","開始");
-        g_taskAction.addLayerAction("殲滅戰邀請頁面","以後再說","ok");
         g_taskAction.addLayerAction("卡詳情頁面","返回");
         g_taskAction.addLayerAction("卡裝備頁面","返回");
         g_taskAction.addLayerAction("裝備強化頁面","關閉");
@@ -3446,6 +3916,470 @@ public class ScriptThread extends SuperScriptThread {
         g_taskAction.addLayerAction("PVP確認頁面","返回");
         g_taskAction.addLayerAction("PVP勝利頁面","ok");
         g_taskAction.addLayerAction("PVP失敗頁面","ok");
+        g_taskAction.addLayerAction("戰鬥頁面",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        g_taskAction.addLayerAction("戰鬥頁面1",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        g_taskAction.addLayerAction("PVP戰鬥頁面",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        g_taskAction.addLayerAction("百日獎勵頁面","ok");
+        g_taskAction.addLayerAction("活動抽獎頁面","下一頁","返回");
+        g_taskAction.addLayerAction("刷圖獎勵頁面","ok");
+        g_taskAction.addLayerAction("鑰匙拉動頁面",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return true;
+            }
+
+            @Override
+            public void after() {
+                touchDown(359,792);
+                touchMove(357,1014);
+                delay(1000);
+                touchUp();
+            }
+        }));
+        g_taskAction.addLayerAction("抽裝備結算頁面","返回");
+        g_taskAction.addLayerAction("裝備抽取頁面","返回");
+
+    }
+
+    /**
+     * 裝備分解
+     */
+    private void initFenJieZhuangBei(){
+        fenJieZhuangBeiTaskAction = new TaskAction();
+        fenJieZhuangBeiTaskAction.addLayerAction("城鎮頁面","進入酒館");
+        fenJieZhuangBeiTaskAction.addLayerAction("酒館頁面","清算营业","裝備分解",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                裝備分解_開關 = false;
+                return false;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        fenJieZhuangBeiTaskAction.addLayerAction("選擇裝備頁面",new UnitAction("灰分解", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if(裝備選定){
+                    裝備分解_開關 = false;
+                    return true;
+                }else{
+                    return false;
+                }
+
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("亮分解", new UnitCallback() {
+            @Override
+            public boolean before() {
+                裝備選定 = false;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"一鍵選擇");
+        fenJieZhuangBeiTaskAction.addLayerAction("裝備一鍵選擇頁面",new UnitAction("選C", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("品級C",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選UC", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("品級UC",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選R", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("品級R",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選SR", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("品級SR",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選SSR", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("品級SSR",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選猛攻", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("種類猛攻",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("取消猛攻", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (!SettingPreference.getBoolean("種類猛攻",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選鐵壁", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("種類鐵壁",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("取消鐵壁", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (!SettingPreference.getBoolean("種類鐵壁",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選生命", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("種類生命",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("取消生命", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (!SettingPreference.getBoolean("種類生命",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選集中", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("種類集中",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("取消集中", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (!SettingPreference.getBoolean("種類集中",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選心眼", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("種類心眼",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("取消心眼", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (!SettingPreference.getBoolean("種類心眼",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選回復", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("種類回復",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("取消回復", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (!SettingPreference.getBoolean("種類回復",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選會心", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("種類會心",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("取消會心", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (!SettingPreference.getBoolean("種類會心",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選不屈", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("種類不屈",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("取消不屈", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (!SettingPreference.getBoolean("種類不屈",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選吸血", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("種類吸血",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("取消吸血", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (!SettingPreference.getBoolean("種類吸血",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("選擇強化", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (SettingPreference.getBoolean("分解強化裝備",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("取消強化", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (!SettingPreference.getBoolean("分解強化裝備",false)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),
+                new UnitAction("選定", new UnitCallback() {
+            @Override
+            public boolean before() {
+                裝備選定 = true;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
     }
 
     /**
@@ -3529,6 +4463,13 @@ public class ScriptThread extends SuperScriptThread {
         delay(2000);
         initData();
         initTaskAction();
+        File file = new File("/sdcard/qdzData.txt");
+        try{
+            file.delete();
+            file.createNewFile();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
         while (!isInterrupted()) {
             if (isPaused()) {
                 String lastHUDText = hudManage.getHUDText("info");
@@ -3579,6 +4520,9 @@ public class ScriptThread extends SuperScriptThread {
                     }else if (友情點買藥_開關){
                         curTaskAction = initYouQingDianMaiYao();
                         showHUDInfo("友情點買藥");
+                    }else if (騎士團祈禱){
+                        curTaskAction = initQiShiTuanQiDao();
+                        showHUDInfo("騎士團祈禱");
                     }else if (金幣本_開關 && 金幣本68 && TimingUtil.betweenHour(7,9)) {
                         curTaskAction = initJinBiBen68();
                         showHUDInfo("金幣本");
@@ -3628,9 +4572,12 @@ public class ScriptThread extends SuperScriptThread {
                         }else if (掛機刷圖模式.equals("2")){
                             curTaskAction = initShuaTuZhuangBei();
                             showHUDInfo("掛機刷裝備");
-                        }else{
+                        }else if (掛機刷圖模式.equals("3")){
                             curTaskAction = initShuaTuBOSSZhan();
                             showHUDInfo("掛機BOSS戰");
+                        }else{
+                            curTaskAction = null;
+                            showHUDInfo("暫無任務");
                         }
                     }
                 }
@@ -3644,14 +4591,17 @@ public class ScriptThread extends SuperScriptThread {
                     }
                 }
 
-//                if (任務重置_開關 && TimingUtil.timingByHour(重置任務時間)){
-//                    任務重置_開關 = false;
-//                    killApp(gamePkg);
-//                    resetMission();
-//                }
-//                if (!任務重置_開關 && DateUtil.getHour() == 0){
-//                    任務重置_開關 = true;
-//                }
+                if (任務重置_開關 && TimingUtil.timingByHour(重置任務時間)){
+                    任務重置_開關 = false;
+                    resetMission();
+                }
+                if (!任務重置_開關 && DateUtil.getHour() == 0){
+                    任務重置_開關 = true;
+                }
+
+                if (裝備分解_開關){
+                    curTaskAction = fenJieZhuangBeiTaskAction;
+                }
 
                 /**********************************畫面超時不動重啟遊戲****************************************/
                 String newRGB = getPixelColor(16,307);
@@ -3684,6 +4634,11 @@ public class ScriptThread extends SuperScriptThread {
                 }
                 Log.e(getTag(), "run:" + curLayerName);
                 showMOVEInfo(curLayerName + "-" + getUnitName());
+                try{
+                    fileWriter(curLayerName + "-" + getUnitName(),file);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
                 if (execTask(curLayerName,curTaskAction)) {
                     delay(500);
                 }else{
@@ -3693,5 +4648,13 @@ public class ScriptThread extends SuperScriptThread {
             }
         }
         scriptEnd();
+    }
+
+    public void fileWriter(String str,File file) throws IOException{
+        FileWriter writer = new FileWriter(file,true);
+        // 向文件写入内容
+        writer.write(DateUtil.getNowTimestampStr() + "  " + str + "\n");
+        writer.flush();
+        writer.close();
     }
 }

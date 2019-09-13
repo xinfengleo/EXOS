@@ -281,7 +281,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="選擇村莊："
+                            android:text="選擇類型："
                             />
                         <LinearLayout
                             android:layout_height="30dp"
@@ -295,8 +295,8 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="#fff"
                                 app:defaultIndex="0"
-                                app:listArray="巴尼亞村,達瑪麗鎮,塔拉,貝塞爾鎮,奧登村"
-                                app:uniqueKey="裝備任務村莊"
+                                app:listArray="猛攻,鐵壁,生命,集中,心眼,回復"
+                                app:uniqueKey="裝備任務類型"
                                 app:valueFromList="true" />
                         </LinearLayout>
                     </LinearLayout>
@@ -318,7 +318,7 @@
                             android:textColor="#fff"
                             app:defaultIndex="0"
                             app:listArray="第一隊,第二隊,第三隊,第四隊,第五隊"
-                            app:uniqueKey="裝備任務隊伍"
+                            app:uniqueKey="裝備任務選隊伍"
                             app:valueFromList="true" />
                     </LinearLayout>
                     <LinearLayout
@@ -341,6 +341,34 @@
                             app:listArray="用體力藥,等待回復體力"
                             app:uniqueKey="裝備任務體力使用"
                             app:valueFromList="true" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="12dp"
+                        >
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="失敗自動降類型"
+                            app:defaultValue="false"
+                            app:uniqueKey="裝備任務失敗降類型" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp">
+                        <TextView
+                            style="?android:checkboxStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/yellow"
+                            android:textSize="10dp"
+                            android:text="※刷裝備前請先保證所選類型的裝備對應的村莊好感度達到四星以上！"
+                            />
                     </LinearLayout>
                 </LinearLayout>
                 <!--BOSS戰-->
@@ -368,22 +396,84 @@
                             android:layout_height="wrap_content"
                             android:text="選擇村莊："
                             />
-                        <LinearLayout
-                            android:layout_height="30dp"
+                        <!--<LinearLayout-->
+                            <!--android:layout_height="30dp"-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:paddingLeft="5dp"-->
+                            <!--&gt;-->
+                            <!--<com.gamebot.botdemo.view.SpinnerExd-->
+                                <!--style="?android:spinnerStyle"-->
+                                <!--android:layout_width="wrap_content"-->
+                                <!--android:layout_height="wrap_content"-->
+                                <!--android:textColor="#fff"-->
+                                <!--app:defaultIndex="0"-->
+                                <!--app:listArray="夢幻激戰,無法者之岩,水晶洞窟,紅色大地,山神之森"-->
+                                <!--app:uniqueKey="BOSS戰村莊"-->
+                                <!--app:valueFromList="true" />-->
+                        <!--</LinearLayout>-->
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:paddingLeft="15dp"
+                        android:orientation="horizontal"
+                        >
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:paddingLeft="5dp"
-                            >
-                            <com.gamebot.botdemo.view.SpinnerExd
-                                style="?android:spinnerStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="#fff"
-                                app:defaultIndex="0"
-                                app:listArray="夢幻激戰,無法者之岩,水晶洞窟,紅色大地,山神之森"
-                                app:uniqueKey="BOSS戰村莊"
-                                app:valueFromList="true" />
-                        </LinearLayout>
+                            android:layout_height="wrap_content"
+                            android:text="夢幻激戰"
+                            app:defaultValue="false"
+                            app:uniqueKey="BOSS戰夢幻激戰" />
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="無法者之岩"
+                            app:defaultValue="false"
+                            app:uniqueKey="BOSS戰無法者之岩" />
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="水晶洞窟"
+                            app:defaultValue="false"
+                            app:uniqueKey="BOSS戰水晶洞窟" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:paddingLeft="15dp"
+                        android:orientation="horizontal"
+                        >
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="紅色大地"
+                            app:defaultValue="false"
+                            app:uniqueKey="BOSS戰紅色大地" />
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="山神之森"
+                            app:defaultValue="false"
+                            app:uniqueKey="BOSS戰山神之森" />
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="墮落根源"
+                            app:defaultValue="false"
+                            app:uniqueKey="BOSS戰墮落根源" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -458,9 +548,23 @@
                             style="?android:checkboxStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="智能降階（失敗時觸發）"
+                            android:text="智能降等級（失敗時觸發）"
                             app:defaultValue="false"
                             app:uniqueKey="BOSS戰智能降階" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp">
+                        <TextView
+                            style="?android:checkboxStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/yellow"
+                            android:textSize="10dp"
+                            android:text="※刷圖順序按照所選村莊的順序執行，刷出殲滅戰后自動調整刷下個村莊，直至所有刷滿為止，所以盡量多選"
+                            />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -560,7 +664,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="猛攻"
-                            app:defaultValue="false"
+                            app:defaultValue="true"
                             app:uniqueKey="種類猛攻" />
                         <com.gamebot.sdk.view.CheckBoxEx
                             style="?android:checkboxStyle"
@@ -568,7 +672,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="鐵壁"
-                            app:defaultValue="false"
+                            app:defaultValue="true"
                             app:uniqueKey="種類鐵壁" />
                         <com.gamebot.sdk.view.CheckBoxEx
                             style="?android:checkboxStyle"
@@ -576,7 +680,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="生命"
-                            app:defaultValue="false"
+                            app:defaultValue="true"
                             app:uniqueKey="種類生命" />
                     </LinearLayout>
                     <LinearLayout
@@ -591,7 +695,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="集中"
-                            app:defaultValue="false"
+                            app:defaultValue="true"
                             app:uniqueKey="種類集中" />
                         <com.gamebot.sdk.view.CheckBoxEx
                             style="?android:checkboxStyle"
@@ -599,7 +703,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="心眼"
-                            app:defaultValue="false"
+                            app:defaultValue="true"
                             app:uniqueKey="種類心眼" />
                         <com.gamebot.sdk.view.CheckBoxEx
                             style="?android:checkboxStyle"
@@ -607,7 +711,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="回復"
-                            app:defaultValue="false"
+                            app:defaultValue="true"
                             app:uniqueKey="種類回復" />
                     </LinearLayout>
                     <LinearLayout
@@ -622,7 +726,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="會心"
-                            app:defaultValue="false"
+                            app:defaultValue="true"
                             app:uniqueKey="種類會心" />
                         <com.gamebot.sdk.view.CheckBoxEx
                             style="?android:checkboxStyle"
@@ -630,7 +734,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="不屈"
-                            app:defaultValue="false"
+                            app:defaultValue="true"
                             app:uniqueKey="種類不屈" />
                         <com.gamebot.sdk.view.CheckBoxEx
                             style="?android:checkboxStyle"
@@ -638,7 +742,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="吸血"
-                            app:defaultValue="false"
+                            app:defaultValue="true"
                             app:uniqueKey="種類吸血" />
                     </LinearLayout>
                     <TextView
