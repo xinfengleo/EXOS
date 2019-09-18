@@ -29,9 +29,11 @@ import com.flyco.dialog.widget.MaterialDialog;
 import com.gamebot.botdemo.entity.VersionResult;
 import com.gamebot.botdemo.service.FloatingViewService;
 import com.gamebot.botdemo.utils.ConsoleHelper;
+import com.gamebot.botdemo.utils.FileUtils;
 import com.gamebot.botdemo.utils.HUDManage;
 import com.gamebot.botdemo.utils.LoadDialog;
 import com.gamebot.botdemo.utils.MsgboxUtils;
+import com.gamebot.botdemo.utils.ProcessUtils;
 import com.gamebot.botdemo.utils.ScreenMetrics;
 import com.gamebot.botdemo.utils.Utils;
 import com.gamebot.sdk.GameBotConfig;
@@ -42,6 +44,7 @@ import com.umeng.analytics.MobclickAgent;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         versionText.setText("版本："+Utils.getLocalVersionName(this));
         checkScreenWH();
+        initSocket();
         authService=AuthService.getInstance();
         loadDialog = new LoadDialog(MainActivity.this, R.style.MyDialogStyle);
         rlMain = (RelativeLayout)findViewById(R.id.rl_main);
@@ -302,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
         showDialog(true);
         if (GameBotConfig.init(getApplicationContext(), "DM29CRS4F7TNHJW2", "HRF5RJ9RFCS5TKGBN2ET56YVYR8E8FB73446LVJY")) {
             Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
+            stopService(intent);
             startService(intent);
             showDialog(false);
             finish();
@@ -407,7 +412,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-
+    private void initSocket(){
+        String CPU_ABI = android.os.Build.CPU_ABI;
+        if("x86".equals(CPU_ABI)){
+            FileUtils.copyFilesFromRaw(getApplicationContext(), R.raw.inject_x86, "inject_x86.zip", "/sdcard/");
+            ZipUtil.unpack(new File("/sdcard/inject_x86.zip"), new File("/sdcard/inject_x86"));
+        }else {
+            FileUtils.copyFilesFromRaw(getApplicationContext(), R.raw.inject_armv7a, "inject_armv7a.zip", "/sdcard/");
+            ZipUtil.unpack(new File("/sdcard/inject_armv7a.zip"), new File("/sdcard/inject_armv7a"));
+        }
+    }
 
 }

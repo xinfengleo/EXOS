@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -66,7 +67,8 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
     private FloatingViewService self;
     private View tap1View,tab2View,tap3View,tabMainView;
     private RadioGroupExd selectShuatu;
-    private LinearLayout qianghuaben,jinhuaben,zhuangbeirenwu,bosszhan;
+    private LinearLayout qianghuaben,jinhuaben,zhuangbeirenwu,bosszhan,llCailiaoben,llJinbiben,llBanzidongzhuxian,llShuahaogandu,llZidongjianmiezhan;
+    private CheckBoxEx cbCailiaoben,cbJinbiben,cbShuahaogandu,cbBanzidongzhuxian,cbZidongjianmiezhan;
 
     @Override
     protected void createSettingView(LayoutInflater layoutInflater) {
@@ -86,10 +88,50 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         jinhuaben = tap3View.findViewById(R.id.jinhuaben);
         zhuangbeirenwu = tap3View.findViewById(R.id.zhuangbeirenwu);
         bosszhan = tap3View.findViewById(R.id.BOSSzhan);
+        llCailiaoben = tab2View.findViewById(R.id.ll_cailiaoben);
+        llJinbiben = tab2View.findViewById(R.id.ll_jinbiben);
+        llShuahaogandu = tab2View.findViewById(R.id.ll_shuahaogandu);
+        llBanzidongzhuxian = tab2View.findViewById(R.id.ll_banzidongzhuxian);
+        llZidongjianmiezhan = tap3View.findViewById(R.id.ll_zidongjianmiezhan);
+        cbCailiaoben = tab2View.findViewById(R.id.cb_cailiaoben);
+        cbJinbiben = tab2View.findViewById(R.id.cb_jinbiben);
+        cbShuahaogandu = tab2View.findViewById(R.id.cb_shuahaogandu);
+        cbBanzidongzhuxian = tab2View.findViewById(R.id.cb_banzidongzhuxian);
+        cbZidongjianmiezhan = tap3View.findViewById(R.id.cb_zidongjianmiezhan);
         initEven();
     }
 
     private void initEven(){
+        if (cbCailiaoben.isChecked()){
+            llCailiaoben.setVisibility(VISIBLE);
+        }else{
+            llCailiaoben.setVisibility(GONE);
+        }
+
+        if (cbJinbiben.isChecked()){
+            llJinbiben.setVisibility(VISIBLE);
+        }else{
+            llJinbiben.setVisibility(GONE);
+        }
+
+        if (cbShuahaogandu.isChecked()){
+            llShuahaogandu.setVisibility(VISIBLE);
+        }else{
+            llShuahaogandu.setVisibility(GONE);
+        }
+
+        if (cbBanzidongzhuxian.isChecked()){
+            llBanzidongzhuxian.setVisibility(VISIBLE);
+        }else{
+            llBanzidongzhuxian.setVisibility(GONE);
+        }
+
+        if (cbZidongjianmiezhan.isChecked()){
+            llZidongjianmiezhan.setVisibility(VISIBLE);
+        }else{
+            llZidongjianmiezhan.setVisibility(GONE);
+        }
+
         switch (selectShuatu.getIndex()){
             case 0:
                 qianghuaben.setVisibility(VISIBLE);
@@ -153,6 +195,59 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
                 }
             }
         });
+        cbCailiaoben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    llCailiaoben.setVisibility(VISIBLE);
+                }else{
+                    llCailiaoben.setVisibility(GONE);
+                }
+            }
+        });
+        cbJinbiben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    llJinbiben.setVisibility(VISIBLE);
+                }else{
+                    llJinbiben.setVisibility(GONE);
+                }
+            }
+        });
+
+        cbShuahaogandu.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    llShuahaogandu.setVisibility(VISIBLE);
+                }else{
+                    llShuahaogandu.setVisibility(GONE);
+                }
+            }
+        });
+
+        cbBanzidongzhuxian.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    llBanzidongzhuxian.setVisibility(VISIBLE);
+                }else{
+                    llBanzidongzhuxian.setVisibility(GONE);
+                }
+            }
+        });
+
+        cbZidongjianmiezhan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    llZidongjianmiezhan.setVisibility(VISIBLE);
+                }else{
+                    llZidongjianmiezhan.setVisibility(GONE);
+                }
+            }
+        });
     }
 
     @Override
@@ -178,9 +273,9 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.btn_new_setting:
-                refreshConfig();
-                break;
+//            case R.id.btn_new_setting:
+//                refreshConfig();
+//                break;
 //            case R.id.btn_daily_setting:
 //
 //                break;

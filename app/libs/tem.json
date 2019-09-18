@@ -1,0 +1,10 @@
+{"data":
+  [
+    {"active":true,"iconType":0,"id":173,"role":33,"visible":true,"x":0.0,"y":0.0,"z":0.0},上酒
+    {"active":true,"iconType":0,"id":153,"role":37,"visible":true,"x":-8.8559999465942383,"y":0.0,"z":-2.1140000820159912},箱子
+    {"active":true,"iconType":0,"id":233,"role":48,"visible":true,"x":4.6939997673034668,"y":1.3769999742507935,"z":-2.0490000247955322},酒罐
+    {"active":true,"iconType":0,"id":188,"role":49,"visible":true,"x":-0.67000001668930054,"y":0.0,"z":3.309999942779541},擦桌子
+    {"active":true,"iconType":0,"id":220,"role":12,"visible":true,"x":2.8499999046325684,"y":1.0199999809265137,"z":-3.7400000095367432},喇叭
+
+  ]
+}

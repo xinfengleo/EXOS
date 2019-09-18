@@ -396,22 +396,6 @@
                             android:layout_height="wrap_content"
                             android:text="選擇村莊："
                             />
-                        <!--<LinearLayout-->
-                            <!--android:layout_height="30dp"-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:paddingLeft="5dp"-->
-                            <!--&gt;-->
-                            <!--<com.gamebot.botdemo.view.SpinnerExd-->
-                                <!--style="?android:spinnerStyle"-->
-                                <!--android:layout_width="wrap_content"-->
-                                <!--android:layout_height="wrap_content"-->
-                                <!--android:textColor="#fff"-->
-                                <!--app:defaultIndex="0"-->
-                                <!--app:listArray="夢幻激戰,無法者之岩,水晶洞窟,紅色大地,山神之森"-->
-                                <!--app:uniqueKey="BOSS戰村莊"-->
-                                <!--app:valueFromList="true" />-->
-                        <!--</LinearLayout>-->
                     </LinearLayout>
                     <LinearLayout
                         android:layout_height="wrap_content"
@@ -474,6 +458,20 @@
                             android:text="墮落根源"
                             app:defaultValue="false"
                             app:uniqueKey="BOSS戰墮落根源" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp">
+                        <TextView
+                            style="?android:checkboxStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/yellow"
+                            android:textSize="10dp"
+                            android:text="※刷圖順序按照所選村莊的順序執行，刷出殲滅戰若無選擇自動殲滅戰，則自動刷下個村莊"
+                            />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -555,16 +553,80 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingLeft="15dp">
-                        <TextView
+                        android:orientation="vertical"
+                        android:paddingLeft="12dp"
+                        >
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            android:id="@+id/cb_zidongjianmiezhan"
                             style="?android:checkboxStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="自動殲滅戰"
+                            app:defaultValue="false"
+                            app:uniqueKey="自動殲滅戰" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/ll_zidongjianmiezhan"
+                        >
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/yellow"
-                            android:textSize="10dp"
-                            android:text="※刷圖順序按照所選村莊的順序執行，刷出殲滅戰后自動調整刷下個村莊，直至所有刷滿為止，所以盡量多選"
-                            />
+                            android:orientation="horizontal"
+                            android:paddingLeft="20dp"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="殲滅戰等級："
+                                />
+                            <com.gamebot.botdemo.view.SpinnerExd
+                                style="?android:spinnerStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:textColor="#fff"
+                                app:defaultIndex="0"
+                                app:listArray="normal,hard,extreme"
+                                app:uniqueKey="殲滅戰等級"
+                                app:valueFromList="true" />
+                    </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingLeft="20dp"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="體力不足時："
+                                />
+                            <com.gamebot.botdemo.view.SpinnerExd
+                                style="?android:spinnerStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:textColor="#fff"
+                                app:defaultIndex="0"
+                                app:listArray="用體力藥,等待回復體力"
+                                app:uniqueKey="殲滅戰體力使用"
+                                app:valueFromList="true" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingLeft="20dp"
+                            >
+                            <com.gamebot.sdk.view.CheckBoxEx
+                                style="?android:checkboxStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="殲滅戰自動降階"
+                                app:defaultValue="false"
+                                app:uniqueKey="殲滅戰自動降階" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
