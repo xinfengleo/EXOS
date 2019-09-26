@@ -849,11 +849,35 @@
                         >
                         <com.gamebot.sdk.view.CheckBoxEx
                             style="?android:checkboxStyle"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="出售金幣箱子"
                             app:defaultValue="false"
                             app:uniqueKey="出售金幣箱子" />
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="使用鑽石擴容"
+                            app:defaultValue="false"
+                            app:uniqueKey="鑽石擴容" />
+                    </LinearLayout>
+                    <!--提示語-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp">
+                        <TextView
+                            style="?android:checkboxStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/yellow"
+                            android:textSize="10dp"
+                            android:text="※當無金幣箱子時，勾選鑽石購買才會觸發，未勾選狀態下無寶箱可出售，任務會停止"
+                            />
                     </LinearLayout>
                 </LinearLayout>
 

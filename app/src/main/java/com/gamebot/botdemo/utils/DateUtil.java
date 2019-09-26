@@ -162,6 +162,14 @@ public class DateUtil {
     }
 
     /**
+     * 取得当前时间的yyyy-MM-dd
+     * @return
+     */
+    public static String getNowDateStr() {
+        return getNowTimestampStr("yyyy-MM-dd");
+    }
+
+    /**
      * 取得当前时间的yyyy-MM-dd HH:mm:ss
      * @param pattern
      * @return

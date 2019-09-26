@@ -85,6 +85,7 @@ public class SocketClient {
             writer=null;
             reader=null;
             socket=null;
+            Log.e(TAG, "斷開連接");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -161,7 +162,7 @@ public class SocketClient {
     }
 
     public boolean isConnected() {
-        return socket != null && socket.isConnected();
+        return !(socket == null || socket.isClosed() || !socket.isConnected() || isServerClose());
     }
 
     public boolean sendMessage(String msg) {

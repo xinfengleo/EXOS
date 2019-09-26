@@ -10,6 +10,7 @@ import android.support.annotation.RawRes;
 import android.util.Log;
 
 import com.antscript.sdk.utils.AntScriptUtils;
+import com.fauth.library.utils.Preference;
 import com.gamebot.botdemo.R;
 import com.gamebot.botdemo.entity.ColorAction;
 import com.gamebot.botdemo.entity.ColorLayerUnit;
@@ -20,6 +21,7 @@ import com.gamebot.botdemo.utils.FileUtils;
 import com.gamebot.botdemo.utils.HUDManage;
 import com.gamebot.botdemo.utils.Utils;
 import com.gamebot.sdk.client.BaseScriptThread;
+import com.gamebot.sdk.preference.SettingPreference;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.topjohnwu.superuser.Shell;
@@ -45,6 +47,7 @@ public abstract class SuperScriptThread extends BaseScriptThread {
     private Point g_MscdPos;
     private String publicUnitName;
     protected ConsoleHelper consoleHelper;
+    protected static Preference Setting;
 
 
     public SuperScriptThread(Context context, ScriptServiceListener scriptServiceListener) {

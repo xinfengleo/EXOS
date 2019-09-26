@@ -3,6 +3,8 @@ package com.gamebot.botdemo.script;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.Log;
+
+import com.fauth.library.utils.Preference;
 import com.gamebot.botdemo.R;
 import com.gamebot.botdemo.entity.Goods;
 import com.gamebot.botdemo.entity.NPCBean;
@@ -27,15 +29,17 @@ import com.topjohnwu.superuser.Shell;
 public class ScriptThread extends SuperScriptThread {
     private final static String gamePkg="com.netmarble.nanatsunotaizai";
     private SocketClient socketClient;
+    private static Preference Setting;
 
 
     private TaskAction g_taskAction,fenJieZhuangBeiTaskAction;
     private boolean 刷初始_開關 = SettingPreference.getBoolean("刷初始開關",false);
     private boolean 使用引繼碼_開關 = SettingPreference.getBoolean("使用引繼碼",false);
-    private boolean 每日免費抽_開關 = SettingPreference.getBoolean("每日免費抽",false);
+    private boolean 每日抽裝備_開關 = SettingPreference.getBoolean("每日抽裝備",false);
+    private boolean 每日領寶箱_開關 = SettingPreference.getBoolean("每日領寶箱",false);
     private boolean 一鑽石抽獎_開關 = SettingPreference.getBoolean("1鑽石抽卡",false);
     private boolean 郵件領取_開關 = false;
-    private boolean 成就領取_開關 = false;
+    private boolean 成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
     private boolean 贈送友情點_開關 = SettingPreference.getBoolean("贈送友情點數",false);
     private boolean 友情點買藥_開關 = SettingPreference.getBoolean("友情點買體力",false);
     private boolean 金幣本_開關 = SettingPreference.getBoolean("金幣本",false);
@@ -59,16 +63,15 @@ public class ScriptThread extends SuperScriptThread {
     private boolean 等待體力回復 = false,通關完成 = false,買食材選好村莊 = false,肉塊購買 = false,野菜購買 = false,料理完成 = false,主線自動編成 = false;
     private boolean easy任務 = false,normal任務 = false,hard任務 = false,刷食材 = false,購買食材_開關 = false;
     private boolean 日常材料本_開關 = false,日常普通本_開關 = false,日常強化任務_開關 = false,日常製作料理_開關 = false,日常BOSS戰_開關 = false,日常PVP戰鬥_開關 = false;
-    private boolean BOSS戰墮落根源 = true,BOSS戰山神之森 = true,BOSS戰紅色大地 = true,BOSS戰水晶洞窟 = true,BOSS戰無法者之岩 = true,BOSS戰夢幻激戰 = true,BOSS戰extreme = true,BOSS戰hard = true,BOSS戰normal = true,戰力不足 = false;
     private boolean 刷裝備完成一次 = false,殲滅戰發生 = false,殲滅戰_開關 = false,殲滅戰招募完成 = false,少隊友 = true;
-    private boolean 巴尼亞村踢箱子 = true,達瑪麗鎮踢箱子 = false,塔拉踢箱子 = false,貝塞爾鎮踢箱子 = false,奧登村踢箱子 = false,里奧內斯城踢箱子 = false,村莊踢箱子中 = false;
+    private boolean 巴尼亞村踢箱子 = true,達瑪麗鎮踢箱子 = false,塔拉踢箱子 = false,貝塞爾鎮踢箱子 = false,奧登村踢箱子 = false,里奧內斯城踢箱子 = false,競技場踢箱子 = true,村莊踢箱子中 = false,酒館踢箱子中 = true;
+    private boolean 當前金幣本 = false,當前裝備本 = false,當前材料本 = false,當前進化本 = false,當前BOSS戰 = false;
 
     private String 抽卡個數Str = String.valueOf((SettingPreference.getInt("抽卡個數", 0)));
     private String 保存遊戲名 = SettingPreference.getString("保存遊戲名","").replace(" ","");
     private String 保存密碼 = SettingPreference.getString("保存密碼","").replace(" ","");
     private String 引繼賬號 = SettingPreference.getString("引繼碼賬號","").replace(" ","");
     private String 引繼密碼 = SettingPreference.getString("引繼碼密碼","").replace(" ","");
-    private String 斷線等待時長 = SettingPreference.getString("斷線等待時長","").replace(" ","");
     private String 卡死重啟時長 = SettingPreference.getString("卡死重啟時長","").replace(" ","");
     private String 金幣本挑戰等級 = SettingPreference.getString("金幣本等級","").replace(" ","");
     private String 金幣本挑戰隊伍 = SettingPreference.getString("金幣本選隊伍","").replace(" ","");
@@ -88,6 +91,11 @@ public class ScriptThread extends SuperScriptThread {
     private String BOSS戰等級 = SettingPreference.getString("BOSS戰選等級","");
     private String 殲滅戰等級 = SettingPreference.getString("殲滅戰等級","");
     private String 多日未登錄獎勵 = SettingPreference.getString("多日未登錄獎勵","");
+    private String 日常BOSS戰關卡 = SettingPreference.getString("日常BOSS戰選關卡","");
+    private String 日常BOSS戰等級 = SettingPreference.getString("日常BOSS戰選等級","");
+    private String 日常普通本類型 = SettingPreference.getString("日常普通本選類型","");
+    private String 日常材料本關卡 = SettingPreference.getString("日常材料本選類型","");
+    private String 日常材料本等級 = SettingPreference.getString("日常材料本選等級","");
     private String oldRGB = "";
     private Goods obj = null;
 
@@ -95,11 +103,12 @@ public class ScriptThread extends SuperScriptThread {
     private int 抽卡個數 = 0,實際個數 = 0,鑽石數量 = 0,體力藥數量 = 0;
     private int 重置任務時間 = 0,斷線重連時長 = 0,每日抽計數 = 3,郵件選擇類型計數 = 3,團長料理計數 = 3;
 
-    private long 斷線等待時間 = 0,t_卡死重啟 = 0,卡死重啟剩餘時間 = 0,t_體力回復 = 0,t_村莊踢箱子 = 0;
+    private long 斷線等待時間 = System.currentTimeMillis(),t_卡死重啟 = 0,卡死重啟剩餘時間 = 0,t_體力回復 = 0,t_村莊踢箱子 = 0;
 
 
     public ScriptThread(Context context, ScriptServiceListener scriptServiceListener) {
         super(context, scriptServiceListener);
+        init(context);
     }
     @Override
     protected String getTag() {
@@ -110,7 +119,9 @@ public class ScriptThread extends SuperScriptThread {
         return context.getResources().getString(R.string.app_name);
     }
 
-
+    public static void init(Context context){
+        Setting = new Preference(context,"dayData");
+    }
 
     private void initTaskAction() {
         initColorAction(false);
@@ -382,10 +393,10 @@ public class ScriptThread extends SuperScriptThread {
     }
 
     /**
-     * 抽裝備和領寶箱
+     * 每日一抽裝備
      * @return
      */
-    private TaskAction initMeiRiChouJiang(){
+    private TaskAction initMeiRiChouZhuangBei(){
         TaskAction taskAction = new TaskAction();
         taskAction.addLayerAction("酒館頁面","清算营业",new UnitAction("打開商店", new UnitCallback() {
             @Override
@@ -399,25 +410,33 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         taskAction.addLayerAction("城鎮頁面","打開商店");
-        taskAction.addLayerAction("商店頁面1","可領","上滑");
-        taskAction.addLayerAction("商店頁面2","可領",new UnitAction("返回", new UnitCallback() {
+        taskAction.addLayerAction("商店頁面1","裝備","上滑");
+        taskAction.addLayerAction("商店頁面2",new UnitAction("返回", new UnitCallback() {
             @Override
             public boolean before() {
-                每日抽計數 --;
-                if (每日抽計數 == 0){
-                    每日免費抽_開關 = false;
-                    return true;
-                }else{
-                    return false;
-                }
+                每日抽裝備_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "每日抽裝備",true);
+                return true;
             }
 
             @Override
             public void after() {
-                每日抽計數 = 3;
+
             }
-        }),"等待");
-        taskAction.addLayerAction("裝備抽取頁面","每日一抽","返回");
+        }));
+        taskAction.addLayerAction("裝備抽取頁面","每日一抽",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                每日抽裝備_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "每日抽裝備",true);
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
         taskAction.addLayerAction("鑰匙拉動頁面",new UnitAction("等待", new UnitCallback() {
             @Override
             public boolean before() {
@@ -432,11 +451,106 @@ public class ScriptThread extends SuperScriptThread {
                 touchUp();
             }
         }));
-        taskAction.addLayerAction("抽裝備結算頁面","返回");
-        taskAction.addLayerAction("彩幣兌換頁面","可領","返回");
-        taskAction.addLayerAction("金幣兌換頁面","可領","返回");
-        taskAction.addLayerAction("銀幣兌換頁面","可領","返回");
-        taskAction.addLayerAction("友情幣兌換頁面","可領","返回");
+        taskAction.addLayerAction("抽裝備結算頁面",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                每日抽裝備_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "每日抽裝備",true);
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        return taskAction;
+    }
+
+    /**
+     * 每日領寶箱
+     * @return
+     */
+    private TaskAction initMeiRiLingBaoXiang(){
+        TaskAction taskAction = new TaskAction();
+        taskAction.addLayerAction("酒館頁面","清算营业",new UnitAction("打開商店", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("城鎮頁面","打開商店");
+        taskAction.addLayerAction("商店頁面1","上滑");
+        taskAction.addLayerAction("商店頁面2","兌換",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                每日領寶箱_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "每日領寶箱",true);
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("彩幣兌換頁面","可領",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                每日領寶箱_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "每日領寶箱",true);
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("金幣兌換頁面","可領",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                每日領寶箱_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "每日領寶箱",true);
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("銀幣兌換頁面","可領",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                每日領寶箱_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "每日領寶箱",true);
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("友情幣兌換頁面","可領",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                每日領寶箱_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "每日領寶箱",true);
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
         return taskAction;
     }
 
@@ -458,10 +572,12 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         taskAction.addLayerAction("城鎮頁面","進入抽獎");
-        taskAction.addLayerAction("抽獎頁面","每日一抽","下一頁",new UnitAction("返回", new UnitCallback() {
+        taskAction.addLayerAction("抽獎頁面","每日一抽","下一頁",
+                new UnitAction("返回", new UnitCallback() {
             @Override
             public boolean before() {
                 一鑽石抽獎_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "一鑽石抽卡",true);
                 return true;
             }
 
@@ -474,7 +590,8 @@ public class ScriptThread extends SuperScriptThread {
         taskAction.addLayerAction("抽獎確認頁面","確認",new UnitAction("關閉", new UnitCallback() {
             @Override
             public boolean before() {
-                一鑽石抽獎_開關 = true;
+                一鑽石抽獎_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "一鑽石抽卡",true);
                 return true;
             }
 
@@ -506,7 +623,7 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         taskAction.addLayerAction("城鎮頁面","打開郵件");
-        taskAction.addLayerAction("郵件頁面","領取","一鍵領取","打開郵件","選擇類型",new UnitAction("關閉", new UnitCallback() {
+        taskAction.addLayerAction("郵件頁面","領取","一鍵取消","一鍵領取","打開郵件","選擇類型",new UnitAction("關閉", new UnitCallback() {
             @Override
             public boolean before() {
                 郵件領取_開關 = false;
@@ -608,7 +725,48 @@ public class ScriptThread extends SuperScriptThread {
      */
     private TaskAction initCunZhuangTiXiangZi(){
         TaskAction taskAction = new TaskAction();
-        taskAction.addLayerAction("酒館頁面","清算营业",new UnitAction("打開世界", new UnitCallback() {
+        taskAction.addLayerAction("酒館頁面","清算营业","查看1","查看2",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (酒館踢箱子中){
+
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+                if (socketClient.isConnected()) {
+                    String tem = socketClient.sendMessageResult("{\"e\":1003}");
+                    NPCBean obj = new Gson().fromJson(tem, NPCBean.class);
+                    if (obj.getData().size() > 0) {
+                        for (int i = 0; i < obj.getData().size(); i++) {
+                            if (obj.getData().get(i).getRole() == 37 && obj.getData().get(i).isActive()) {
+                                socketClient.sendMessage("{\"e\":2002,\"x\":" + obj.getData().get(i).getX() + ",\"y\":" + obj.getData().get(i).getY() + ",\"z\":" + obj.getData().get(i).getZ() + "}");
+                                delay(5000);
+                            }
+                        }
+                    }
+                    酒館踢箱子中 = false;
+                }
+            }
+        }),new UnitAction("打開戰鬥", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (競技場踢箱子){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("打開世界", new UnitCallback() {
             @Override
             public boolean before() {
                 return true;
@@ -619,7 +777,65 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("城鎮頁面","查看",new UnitAction("等待", new UnitCallback() {
+        taskAction.addLayerAction("戰鬥內頁面","打開PVP");
+        taskAction.addLayerAction("競技場頁面",new UnitAction("進入酒館", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (酒館踢箱子中) {
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"查看1","查看2",new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (競技場踢箱子){
+
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+                if (socketClient.isConnected()) {
+                    String tem = socketClient.sendMessageResult("{\"e\":1003}");
+                    NPCBean obj = new Gson().fromJson(tem, NPCBean.class);
+                    if (obj.getData().size() > 0) {
+                        for (int i = 0; i < obj.getData().size(); i++) {
+                            if (obj.getData().get(i).getRole() == 37 && obj.getData().get(i).isActive()) {
+                                Log.e("TAG", "{\"e\":2002,\"x\":" + obj.getData().get(i).getX() + ",\"y\":" + obj.getData().get(i).getY() + ",\"z\":" + obj.getData().get(i).getZ() + "}");
+                                socketClient.sendMessage("{\"e\":2002,\"x\":" + obj.getData().get(i).getX() + ",\"y\":" + obj.getData().get(i).getY() + ",\"z\":" + obj.getData().get(i).getZ() + "}");
+                                delay(5000);
+                            }
+                        }
+                    }
+                    競技場踢箱子 = false;
+                }
+            }
+        }),"打開世界");
+        taskAction.addLayerAction("城鎮頁面",new UnitAction("進入酒館", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (酒館踢箱子中 || 競技場踢箱子) {
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"查看1","查看2",new UnitAction("等待", new UnitCallback() {
             @Override
             public boolean before() {
                 if (村莊踢箱子中){
@@ -631,23 +847,23 @@ public class ScriptThread extends SuperScriptThread {
 
             @Override
             public void after() {
-                String tem = socketClient.sendMessageResult("{\"e\":1003}");
-                NPCBean obj = new Gson().fromJson(tem, NPCBean.class);
-                if (obj.getData().size() > 0){
-                    for (int i = 0;i<obj.getData().size();i++){
-                        if (obj.getData().get(i).getRole() == 37 && obj.getData().get(i).isActive()){
-                            socketClient.sendMessage("{\"e\":2002,\"x\":" + obj.getData().get(i).getX() + ",\"y\":" + obj.getData().get(i).getY() +",\"z\":" + obj.getData().get(i).getZ() +"}");
-                            delay(1000);
-                            return;
-                        }
-                        if (obj.getData().get(i).getRole() == 22 && obj.getData().get(i).isActive()){
-                            socketClient.sendMessage("{\"e\":2002,\"x\":" + obj.getData().get(i).getX() + ",\"y\":" + obj.getData().get(i).getY() +",\"z\":" + obj.getData().get(i).getZ() +"}");
-                            delay(1000);
-                            return;
+                if (socketClient.isConnected()) {
+                    String tem = socketClient.sendMessageResult("{\"e\":1003}");
+                    NPCBean obj = new Gson().fromJson(tem, NPCBean.class);
+                    if (obj.getData().size() > 0) {
+                        for (int i = 0; i < obj.getData().size(); i++) {
+                            if (obj.getData().get(i).getRole() == 37 && obj.getData().get(i).isActive()) {
+                                socketClient.sendMessage("{\"e\":2002,\"x\":" + obj.getData().get(i).getX() + ",\"y\":" + obj.getData().get(i).getY() + ",\"z\":" + obj.getData().get(i).getZ() + "}");
+                                delay(5000);
+                            }
+                            if (obj.getData().get(i).getRole() == 22 && obj.getData().get(i).isActive()) {
+                                socketClient.sendMessage("{\"e\":2002,\"x\":" + obj.getData().get(i).getX() + ",\"y\":" + obj.getData().get(i).getY() + ",\"z\":" + obj.getData().get(i).getZ() + "}");
+                                delay(5000);
+                            }
                         }
                     }
+                    村莊踢箱子中 = false;
                 }
-                村莊踢箱子中 = false;
             }
         }),"打開世界");
         taskAction.addLayerAction("世界頁面",new UnitAction("點豬", new UnitCallback() {
@@ -783,23 +999,14 @@ public class ScriptThread extends SuperScriptThread {
      */
     private TaskAction initSongYouQingDian(){
         TaskAction taskAction = new TaskAction();
-        taskAction.addLayerAction("酒館頁面","清算营业",new UnitAction("打開設置", new UnitCallback() {
-            @Override
-            public boolean before() {
-                return true;
-            }
-
-            @Override
-            public void after() {
-
-            }
-        }));
+        taskAction.addLayerAction("酒館頁面","清算营业","打開設置");
         taskAction.addLayerAction("城鎮頁面","打開設置");
         taskAction.addLayerAction("設置頁面","打開好友");
-        taskAction.addLayerAction("好友頁面","全部贈送",new UnitAction("返回", new UnitCallback() {
+        taskAction.addLayerAction("好友頁面","全部贈送", new UnitAction("返回", new UnitCallback() {
             @Override
             public boolean before() {
                 贈送友情點_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "贈送友情點",true);
                 return true;
             }
 
@@ -818,17 +1025,7 @@ public class ScriptThread extends SuperScriptThread {
     private TaskAction initYouQingDianMaiYao(){
         TaskAction taskAction = new TaskAction();
         taskAction.addLayerAction("城鎮頁面","打開商店");
-        taskAction.addLayerAction("酒館頁面","清算营业",new UnitAction("打開商店", new UnitCallback() {
-            @Override
-            public boolean before() {
-                return true;
-            }
-
-            @Override
-            public void after() {
-
-            }
-        }));
+        taskAction.addLayerAction("酒館頁面","清算营业","打開商店");
         taskAction.addLayerAction("商店頁面1","上滑");
         taskAction.addLayerAction("商店頁面2","幣換物");
         taskAction.addLayerAction("彩幣兌換頁面","友情點兌換");
@@ -838,6 +1035,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 友情點買藥_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "友情點買藥",true);
                 return true;
             }
 
@@ -875,6 +1073,7 @@ public class ScriptThread extends SuperScriptThread {
             public boolean before() {
                 MAX選中 = false;
                 友情點買藥_開關 = false;
+                Setting.putBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "友情點買藥",true);
                 return true;
             }
 
@@ -964,6 +1163,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本68 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -986,6 +1186,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本68 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -995,10 +1196,22 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         taskAction.addLayerAction("戰鬥內頁面","打開副本");
-        taskAction.addLayerAction("副本頁面","金幣本",new UnitAction("返回", new UnitCallback() {
+        taskAction.addLayerAction("副本頁面",new UnitAction("金幣本", new UnitCallback() {
+            @Override
+            public boolean before() {
+                當前金幣本 = true;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("返回", new UnitCallback() {
             @Override
             public boolean before() {
                 金幣本68 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1039,13 +1252,13 @@ public class ScriptThread extends SuperScriptThread {
             public boolean before() {
                 if (金幣本買藥.equals("停止任務")){
                     金幣本68 = false;
+                    當前金幣本 = false;
                     return true;
                 }else if (金幣本買藥.equals("等待回復體力")){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return true;
                 }else{
                     return false;
@@ -1060,24 +1273,25 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (obj==null){
-                    String tem = socketClient.sendMessageResult("{\"e\":1002}");
-                    Goods obj = new Gson().fromJson(tem, Goods.class);
-                    if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
-                        鑽石數量 = obj.getData().getBuyDiaCount();
-                        體力藥數量 = obj.getData().getAPItemCount();
+                    if (socketClient.isConnected()) {
+                        String tem = socketClient.sendMessageResult("{\"e\":1002}");
+                        Goods obj = new Gson().fromJson(tem, Goods.class);
+                        if (obj.getData().getBuyDiaCount() != 0 || obj.getData().getAPItemCount() != 0) {
+                            鑽石數量 = obj.getData().getBuyDiaCount();
+                            體力藥數量 = obj.getData().getAPItemCount();
+                        }
                     }
                 }
                 if (體力藥數量 <= 設置體力藥數量){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return false;
                 }else {
-                    if (金幣本買藥.equals("用體力藥")) {
+                    if (金幣本買藥.equals("用體力藥") || 金幣本買藥.equals("用鑽石購買")) {
                         return true;
-                    } else {
+                    }else{
                         return false;
                     }
                 }
@@ -1096,12 +1310,12 @@ public class ScriptThread extends SuperScriptThread {
 
             @Override
             public void after() {
-                體力藥數量--;
             }
         }), new UnitAction("關閉", new UnitCallback() {
             @Override
             public boolean before() {
                 金幣本68 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1114,6 +1328,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本68 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1156,6 +1371,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本1113 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1178,6 +1394,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本1113 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1187,10 +1404,22 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         taskAction.addLayerAction("戰鬥內頁面","打開副本");
-        taskAction.addLayerAction("副本頁面","金幣本",new UnitAction("返回", new UnitCallback() {
+        taskAction.addLayerAction("副本頁面",new UnitAction("金幣本", new UnitCallback() {
+            @Override
+            public boolean before() {
+                當前金幣本 = true;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("返回", new UnitCallback() {
             @Override
             public boolean before() {
                 金幣本1113 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1199,7 +1428,21 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("副本選關頁面","金幣" + 金幣本挑戰等級);
+        taskAction.addLayerAction("副本選關頁面",new UnitAction("金幣" + 金幣本挑戰等級, new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (當前金幣本){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"返回");
         taskAction.addLayerAction("戰鬥準備頁面",new UnitAction(金幣本挑戰隊伍, new UnitCallback() {
             @Override
             public boolean before() {
@@ -1231,13 +1474,13 @@ public class ScriptThread extends SuperScriptThread {
             public boolean before() {
                 if (金幣本買藥.equals("停止任務")){
                     金幣本1113 = false;
+                    當前金幣本 = false;
                     return true;
                 }else if (金幣本買藥.equals("等待回復體力")){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return true;
                 }else{
                     return false;
@@ -1252,19 +1495,20 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (obj==null){
-                    String tem = socketClient.sendMessageResult("{\"e\":1002}");
-                    Goods obj = new Gson().fromJson(tem, Goods.class);
-                    if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
-                        鑽石數量 = obj.getData().getBuyDiaCount();
-                        體力藥數量 = obj.getData().getAPItemCount();
+                    if (socketClient.isConnected()){
+                        String tem = socketClient.sendMessageResult("{\"e\":1002}");
+                        Goods obj = new Gson().fromJson(tem, Goods.class);
+                        if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
+                            鑽石數量 = obj.getData().getBuyDiaCount();
+                            體力藥數量 = obj.getData().getAPItemCount();
+                        }
                     }
                 }
                 if (體力藥數量 <= 設置體力藥數量){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return false;
                 }else {
                     if (金幣本買藥.equals("用體力藥")) {
@@ -1294,6 +1538,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本1113 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1306,6 +1551,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本1113 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1348,6 +1594,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本1921 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1370,6 +1617,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本1921 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1379,10 +1627,22 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         taskAction.addLayerAction("戰鬥內頁面","打開副本");
-        taskAction.addLayerAction("副本頁面","金幣本",new UnitAction("返回", new UnitCallback() {
+        taskAction.addLayerAction("副本頁面",new UnitAction("金幣本", new UnitCallback() {
+            @Override
+            public boolean before() {
+                當前金幣本 = true;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("返回", new UnitCallback() {
             @Override
             public boolean before() {
                 金幣本1921 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1391,7 +1651,21 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("副本選關頁面","金幣" + 金幣本挑戰等級);
+        taskAction.addLayerAction("副本選關頁面",new UnitAction("金幣" + 金幣本挑戰等級, new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (當前金幣本){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"返回");
         taskAction.addLayerAction("戰鬥準備頁面",new UnitAction(金幣本挑戰隊伍, new UnitCallback() {
             @Override
             public boolean before() {
@@ -1423,13 +1697,13 @@ public class ScriptThread extends SuperScriptThread {
             public boolean before() {
                 if (金幣本買藥.equals("停止任務")){
                     金幣本1921 = false;
+                    當前金幣本 = false;
                     return true;
                 }else if (金幣本買藥.equals("等待回復體力")){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return true;
                 }else{
                     return false;
@@ -1444,19 +1718,20 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (obj==null){
-                    String tem = socketClient.sendMessageResult("{\"e\":1002}");
-                    Goods obj = new Gson().fromJson(tem, Goods.class);
-                    if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
-                        鑽石數量 = obj.getData().getBuyDiaCount();
-                        體力藥數量 = obj.getData().getAPItemCount();
+                    if (socketClient.isConnected()){
+                        String tem = socketClient.sendMessageResult("{\"e\":1002}");
+                        Goods obj = new Gson().fromJson(tem, Goods.class);
+                        if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
+                            鑽石數量 = obj.getData().getBuyDiaCount();
+                            體力藥數量 = obj.getData().getAPItemCount();
+                        }
                     }
                 }
                 if (體力藥數量 <= 設置體力藥數量){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return false;
                 }else {
                     if (金幣本買藥.equals("用體力藥")) {
@@ -1486,6 +1761,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本1921 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1498,6 +1774,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 金幣本1921 = false;
+                當前金幣本 = false;
                 return true;
             }
 
@@ -1639,10 +1916,9 @@ public class ScriptThread extends SuperScriptThread {
                     return true;
                 }else if (材料本買藥.equals("等待回復體力")){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return true;
                 }else{
                     return false;
@@ -1657,19 +1933,20 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (obj==null){
-                    String tem = socketClient.sendMessageResult("{\"e\":1002}");
-                    Goods obj = new Gson().fromJson(tem, Goods.class);
-                    if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
-                        鑽石數量 = obj.getData().getBuyDiaCount();
-                        體力藥數量 = obj.getData().getAPItemCount();
+                    if (socketClient.isConnected()){
+                        String tem = socketClient.sendMessageResult("{\"e\":1002}");
+                        Goods obj = new Gson().fromJson(tem, Goods.class);
+                        if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
+                            鑽石數量 = obj.getData().getBuyDiaCount();
+                            體力藥數量 = obj.getData().getAPItemCount();
+                        }
                     }
                 }
                 if (體力藥數量 <= 設置體力藥數量){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return false;
                 }else {
                     if (材料本買藥.equals("用體力藥")) {
@@ -2005,10 +2282,9 @@ public class ScriptThread extends SuperScriptThread {
                     return true;
                 }else if (村莊好感度買藥.equals("等待回復體力")){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return true;
                 }else{
                     return false;
@@ -2023,19 +2299,20 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (obj==null){
-                    String tem = socketClient.sendMessageResult("{\"e\":1002}");
-                    Goods obj = new Gson().fromJson(tem, Goods.class);
-                    if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
-                        鑽石數量 = obj.getData().getBuyDiaCount();
-                        體力藥數量 = obj.getData().getAPItemCount();
+                    if (socketClient.isConnected()){
+                        String tem = socketClient.sendMessageResult("{\"e\":1002}");
+                        Goods obj = new Gson().fromJson(tem, Goods.class);
+                        if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
+                            鑽石數量 = obj.getData().getBuyDiaCount();
+                            體力藥數量 = obj.getData().getAPItemCount();
+                        }
                     }
                 }
                 if (體力藥數量 <= 設置體力藥數量){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return false;
                 }else {
                     if (村莊好感度買藥.equals("用體力藥")) {
@@ -2501,6 +2778,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 日常材料本_開關 = false;
+                當前材料本 = false;
                 return true;
             }
 
@@ -2523,6 +2801,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 日常材料本_開關 = false;
+                當前材料本 = false;
                 return true;
             }
 
@@ -2532,10 +2811,22 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         taskAction.addLayerAction("戰鬥內頁面","打開副本");
-        taskAction.addLayerAction("副本頁面","材料本",new UnitAction("返回", new UnitCallback() {
+        taskAction.addLayerAction("副本頁面",new UnitAction("材料本", new UnitCallback() {
+            @Override
+            public boolean before() {
+                當前材料本 = true;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("返回", new UnitCallback() {
             @Override
             public boolean before() {
                 日常材料本_開關 = false;
+                當前材料本 = false;
                 return true;
             }
 
@@ -2544,7 +2835,21 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("副本選關頁面","推薦",new UnitAction("強化", new UnitCallback() {
+        taskAction.addLayerAction("副本選關頁面",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (當前材料本){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"材料" + 日常材料本等級,new UnitAction(日常材料本關卡, new UnitCallback() {
             @Override
             public boolean before() {
                 return true;
@@ -2552,7 +2857,13 @@ public class ScriptThread extends SuperScriptThread {
 
             @Override
             public void after() {
-                swipe(292,497,311,379,2000);
+                if(日常材料本等級.equals("強化")){
+                    swipe(292,497,311,379,2000);
+                }else if (日常材料本等級.equals("金幣")){
+                    swipe(306,670,318,386,2000);
+                }else{
+                    swipe(340,839,358,380,2000);
+                }
             }
         }),"等待");
         taskAction.addLayerAction("戰鬥準備頁面","start");
@@ -2560,10 +2871,9 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 等待體力回復 = true;
+                村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                 t_體力回復 = System.currentTimeMillis();
-                if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                    成就領取_開關 = true;
-                }
+                成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                 return true;
             }
 
@@ -2576,6 +2886,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 日常材料本_開關 = false;
+                當前材料本 = false;
                 return true;
             }
 
@@ -2618,11 +2929,12 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("世界頁面","找到豬","點豬");
-        taskAction.addLayerAction("副本選關頁面","hard","normal","easy",new UnitAction("返回", new UnitCallback() {
+        taskAction.addLayerAction("世界頁面","打開戰鬥");
+        taskAction.addLayerAction("戰鬥內頁面","打開裝備副本");
+        taskAction.addLayerAction("刷裝備選擇頁面",日常普通本類型,"領取","開始",new UnitAction("前往", new UnitCallback() {
             @Override
             public boolean before() {
-                日常普通本_開關 = false;
+                當前裝備本 = true;
                 return true;
             }
 
@@ -2630,15 +2942,19 @@ public class ScriptThread extends SuperScriptThread {
             public void after() {
 
             }
-        }));
-        taskAction.addLayerAction("戰鬥準備頁面","start");
-        taskAction.addLayerAction("入場體力不足頁面",new UnitAction("取消", new UnitCallback() {
+        }), new UnitAction("等待", new UnitCallback() {
             @Override
             public boolean before() {
-                等待體力回復 = true;
-                t_體力回復 = System.currentTimeMillis();
-                if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                    成就領取_開關 = true;
+                if (日常普通本類型.equals("回復")){
+                    日常普通本類型 = "心眼";
+                }else if (日常普通本類型.equals("心眼")){
+                    日常普通本類型 = "集中";
+                }else if (日常普通本類型.equals("集中")){
+                    日常普通本類型 = "生命";
+                }else if (日常普通本類型.equals("生命")){
+                    日常普通本類型 = "鐵壁";
+                }else if (日常普通本類型.equals("鐵壁")){
+                    日常普通本類型 = "猛攻";
                 }
                 return true;
             }
@@ -2648,10 +2964,29 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("鑽石買體力頁面",new UnitAction("關閉", new UnitCallback() {
+        taskAction.addLayerAction("副本選關頁面",new UnitAction("返回", new UnitCallback() {
             @Override
             public boolean before() {
-                日常普通本_開關 = false;
+                if (當前裝備本){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"hard","normal","easy");
+        taskAction.addLayerAction("戰鬥準備頁面","start");
+        taskAction.addLayerAction("入場體力不足頁面",new UnitAction("取消", new UnitCallback() {
+            @Override
+            public boolean before() {
+                等待體力回復 = true;
+                村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
+                t_體力回復 = System.currentTimeMillis();
+                成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                 return true;
             }
 
@@ -2665,6 +3000,7 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 日常普通本_開關 = false;
+                當前裝備本 = false;
                 return true;
             }
 
@@ -2676,7 +3012,6 @@ public class ScriptThread extends SuperScriptThread {
         taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
             @Override
             public boolean before() {
-                日常普通本_開關 = false;
                 return true;
             }
 
@@ -2888,251 +3223,9 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         taskAction.addLayerAction("戰鬥內頁面","打開BOSS戰");
-        taskAction.addLayerAction("BOSS戰選關頁面",
-                new UnitAction("墮落根源", new UnitCallback() {
-                    @Override
-                    public boolean before() {
-                        if (BOSS戰山神之森){
-                            return true;
-                        }else{
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    public void after() {
-
-                    }
-                }),
-                new UnitAction("山神之森", new UnitCallback() {
-            @Override
-            public boolean before() {
-                if (BOSS戰山神之森){
-                    BOSS戰墮落根源 = false;
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-
-            @Override
-            public void after() {
-
-            }
-        }),
-                new UnitAction("紅色大地", new UnitCallback() {
-            @Override
-            public boolean before() {
-                if (BOSS戰紅色大地){
-                    BOSS戰山神之森 = false;
-                    BOSS戰墮落根源 = false;
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-
-            @Override
-            public void after() {
-            }
-        }),
-                new UnitAction("水晶洞窟", new UnitCallback() {
-            @Override
-            public boolean before() {
-                if (BOSS戰水晶洞窟){
-                    BOSS戰墮落根源 = false;
-                    BOSS戰山神之森 = false;
-                    BOSS戰紅色大地 = false;
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-
-            @Override
-            public void after() {
-            }
-        }),
-                new UnitAction("無法者之岩", new UnitCallback() {
-            @Override
-            public boolean before() {
-                if (BOSS戰無法者之岩){
-                    BOSS戰墮落根源 = false;
-                    BOSS戰山神之森 = false;
-                    BOSS戰紅色大地 = false;
-                    BOSS戰水晶洞窟 = false;
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-
-            @Override
-            public void after() {
-            }
-        }),
-                new UnitAction("夢幻激戰", new UnitCallback() {
-            @Override
-            public boolean before() {
-                if (BOSS戰夢幻激戰){
-                    BOSS戰墮落根源 = false;
-                    BOSS戰山神之森 = false;
-                    BOSS戰紅色大地 = false;
-                    BOSS戰水晶洞窟 = false;
-                    BOSS戰無法者之岩 = false;
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-
-            @Override
-            public void after() {
-            }
-        }),
-                new UnitAction("返回", new UnitCallback() {
-                    @Override
-                    public boolean before() {
-                        日常BOSS戰_開關 = false;
-                        return true;
-                    }
-
-                    @Override
-                    public void after() {
-                        BOSS戰山神之森 = true;
-                        BOSS戰紅色大地 = true;
-                        BOSS戰水晶洞窟 = true;
-                        BOSS戰無法者之岩 = true;
-                        BOSS戰夢幻激戰 = true;
-                    }
-                }));
-        taskAction.addLayerAction("副本選關頁面",
-                new UnitAction("extreme", new UnitCallback() {
-            @Override
-            public boolean before() {
-                if (BOSS戰extreme){
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-
-            @Override
-            public void after() {
-
-            }
-        }),
-                new UnitAction("hard", new UnitCallback() {
-                    @Override
-                    public boolean before() {
-                        if (BOSS戰hard){
-                            BOSS戰extreme = false;
-                            return true;
-                        }else{
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    public void after() {
-
-                    }
-                }),
-                new UnitAction("normal", new UnitCallback() {
-                    @Override
-                    public boolean before() {
-                        if (BOSS戰normal){
-                            BOSS戰extreme = false;
-                            BOSS戰hard = false;
-                            return true;
-                        }else{
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    public void after() {
-
-                    }
-                }),
-                new UnitAction("返回", new UnitCallback() {
-                    @Override
-                    public boolean before() {
-                        if (BOSS戰墮落根源){
-                            BOSS戰墮落根源 = false;
-                        }else {
-                            if (BOSS戰山神之森) {
-                                BOSS戰山神之森 = false;
-                            } else {
-                                if (BOSS戰紅色大地) {
-                                    BOSS戰紅色大地 = false;
-                                } else {
-                                    if (BOSS戰水晶洞窟) {
-                                        BOSS戰水晶洞窟 = false;
-                                    } else {
-                                        if (BOSS戰無法者之岩) {
-                                            BOSS戰無法者之岩 = false;
-                                        } else {
-                                            if (BOSS戰夢幻激戰) {
-                                                BOSS戰夢幻激戰 = false;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public void after() {
-                        BOSS戰extreme = true;
-                        BOSS戰hard = true;
-                        BOSS戰normal = true;
-                    }
-                }));
-        taskAction.addLayerAction("戰鬥準備頁面",
-                new UnitAction("戰力不足", new UnitCallback() {
-            @Override
-            public boolean before() {
-                if (BOSS戰extreme){
-                    BOSS戰extreme = false;
-                    戰力不足 = true;
-                }else{
-                    if (BOSS戰hard){
-                        BOSS戰hard = false;
-                        戰力不足 = true;
-                    }else{
-                        if (BOSS戰normal){
-                            BOSS戰normal = false;
-                            戰力不足 = true;
-                        }
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public void after() {
-
-            }
-        }),
-                new UnitAction("start", new UnitCallback() {
-            @Override
-            public boolean before() {
-                if (戰力不足){
-                    return false;
-                }else{
-                    return true;
-                }
-            }
-
-            @Override
-            public void after() {
-
-            }
-        }),
-                new UnitAction("返回", new UnitCallback() {
+        taskAction.addLayerAction("BOSS戰選關頁面",日常BOSS戰關卡);
+        taskAction.addLayerAction("副本選關頁面",日常BOSS戰等級);
+        taskAction.addLayerAction("戰鬥準備頁面",new UnitAction("start", new UnitCallback() {
             @Override
             public boolean before() {
                 return true;
@@ -3140,17 +3233,16 @@ public class ScriptThread extends SuperScriptThread {
 
             @Override
             public void after() {
-                戰力不足 = false;
+
             }
-        }));
+        }), "返回");
         taskAction.addLayerAction("入場體力不足頁面",new UnitAction("取消", new UnitCallback() {
             @Override
             public boolean before() {
                 等待體力回復 = true;
+                村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                 t_體力回復 = System.currentTimeMillis();
-                if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                    成就領取_開關 = true;
-                }
+                成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                 return true;
             }
 
@@ -3162,7 +3254,6 @@ public class ScriptThread extends SuperScriptThread {
         taskAction.addLayerAction("鑽石買體力頁面",new UnitAction("關閉", new UnitCallback() {
             @Override
             public boolean before() {
-                日常BOSS戰_開關 = false;
                 return true;
             }
 
@@ -3187,7 +3278,11 @@ public class ScriptThread extends SuperScriptThread {
         taskAction.addLayerAction("通關失敗頁面",new UnitAction("ok", new UnitCallback() {
             @Override
             public boolean before() {
-                日常BOSS戰_開關 = false;
+                if (日常BOSS戰等級.equals("extreme")){
+                    日常BOSS戰等級 = "hard";
+                }else{
+                    日常BOSS戰等級 = "normal";
+                }
                 return true;
             }
 
@@ -3251,7 +3346,7 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("PVP準備頁面",new UnitAction("自動編隊", new UnitCallback() {
+        taskAction.addLayerAction("PVP一般頁面",new UnitAction("自動編隊", new UnitCallback() {
             @Override
             public boolean before() {
                 if (自動編隊){
@@ -3277,6 +3372,7 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
+        taskAction.addLayerAction("PVP上級頁面","一般");
         taskAction.addLayerAction("PVP確認頁面","檢索","返回");
         taskAction.addLayerAction("PVP戰鬥頁面","AUTO","等待");
         taskAction.addLayerAction("PVP勝利頁面",new UnitAction("ok", new UnitCallback() {
@@ -3387,10 +3483,9 @@ public class ScriptThread extends SuperScriptThread {
             public boolean before() {
                 if (SettingPreference.getString("強化本體力使用","").equals("等待回復體力")){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return true;
                 }else{
                     return false;
@@ -3405,19 +3500,20 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (obj==null){
-                    String tem = socketClient.sendMessageResult("{\"e\":1002}");
-                    Goods obj = new Gson().fromJson(tem, Goods.class);
-                    if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
-                        鑽石數量 = obj.getData().getBuyDiaCount();
-                        體力藥數量 = obj.getData().getAPItemCount();
+                    if (socketClient.isConnected()){
+                        String tem = socketClient.sendMessageResult("{\"e\":1002}");
+                        Goods obj = new Gson().fromJson(tem, Goods.class);
+                        if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
+                            鑽石數量 = obj.getData().getBuyDiaCount();
+                            體力藥數量 = obj.getData().getAPItemCount();
+                        }
                     }
                 }
                 if (體力藥數量 <= 設置體力藥數量){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return false;
                 }else {
                     if (SettingPreference.getString("強化本體力使用", "").equals("用體力藥")) {
@@ -3513,7 +3609,18 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         taskAction.addLayerAction("戰鬥內頁面","打開副本");
-        taskAction.addLayerAction("副本頁面","進化本",new UnitAction("返回", new UnitCallback() {
+        taskAction.addLayerAction("副本頁面",new UnitAction("進化本", new UnitCallback() {
+            @Override
+            public boolean before() {
+                當前進化本 = true;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("返回", new UnitCallback() {
             @Override
             public boolean before() {
                 return true;
@@ -3524,7 +3631,21 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("副本選關頁面",進化本等級,"上滑","返回");
+        taskAction.addLayerAction("副本選關頁面",new UnitAction(進化本等級, new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (當前進化本){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),"上滑","返回");
         taskAction.addLayerAction("戰鬥準備頁面",new UnitAction(SettingPreference.getString("進化本選隊伍",""), new UnitCallback() {
             @Override
             public boolean before() {
@@ -3556,10 +3677,9 @@ public class ScriptThread extends SuperScriptThread {
             public boolean before() {
                 if (SettingPreference.getString("進化本體力使用","").equals("等待回復體力")){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return true;
                 }else{
                     return false;
@@ -3574,19 +3694,20 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (obj==null){
-                    String tem = socketClient.sendMessageResult("{\"e\":1002}");
-                    Goods obj = new Gson().fromJson(tem, Goods.class);
-                    if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
-                        鑽石數量 = obj.getData().getBuyDiaCount();
-                        體力藥數量 = obj.getData().getAPItemCount();
+                    if (socketClient.isConnected()){
+                        String tem = socketClient.sendMessageResult("{\"e\":1002}");
+                        Goods obj = new Gson().fromJson(tem, Goods.class);
+                        if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
+                            鑽石數量 = obj.getData().getBuyDiaCount();
+                            體力藥數量 = obj.getData().getAPItemCount();
+                        }
                     }
                 }
                 if (體力藥數量 <= 設置體力藥數量){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return false;
                 }else {
                     if (SettingPreference.getString("進化本體力使用", "").equals("用體力藥")) {
@@ -3661,7 +3782,28 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("酒館頁面","清算营业",new UnitAction("打開戰鬥", new UnitCallback() {
+        taskAction.addLayerAction("酒館頁面","清算营业",new UnitAction("打開世界", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }),new UnitAction("等待", new UnitCallback() {
+            @Override
+            public boolean before() {
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
+        taskAction.addLayerAction("世界頁面",new UnitAction("打開戰鬥", new UnitCallback() {
             @Override
             public boolean before() {
                 return true;
@@ -3752,10 +3894,9 @@ public class ScriptThread extends SuperScriptThread {
             public boolean before() {
                 if (SettingPreference.getString("裝備任務體力使用","").equals("等待回復體力")){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return true;
                 }else{
                     return false;
@@ -3770,19 +3911,20 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (obj==null){
-                    String tem = socketClient.sendMessageResult("{\"e\":1002}");
-                    Goods obj = new Gson().fromJson(tem, Goods.class);
-                    if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
-                        鑽石數量 = obj.getData().getBuyDiaCount();
-                        體力藥數量 = obj.getData().getAPItemCount();
+                    if (socketClient.isConnected()){
+                        String tem = socketClient.sendMessageResult("{\"e\":1002}");
+                        Goods obj = new Gson().fromJson(tem, Goods.class);
+                        if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
+                            鑽石數量 = obj.getData().getBuyDiaCount();
+                            體力藥數量 = obj.getData().getAPItemCount();
+                        }
                     }
                 }
                 if (體力藥數量 <= 設置體力藥數量){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return false;
                 }else {
                     if (SettingPreference.getString("裝備任務體力使用", "").equals("用體力藥")) {
@@ -3890,7 +4032,18 @@ public class ScriptThread extends SuperScriptThread {
 
             }
         }));
-        taskAction.addLayerAction("戰鬥內頁面","打開BOSS戰");
+        taskAction.addLayerAction("戰鬥內頁面",new UnitAction("打開BOSS戰", new UnitCallback() {
+            @Override
+            public boolean before() {
+                當前BOSS戰 = true;
+                return true;
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }));
         taskAction.addLayerAction("BOSS戰選關頁面",new UnitAction("殲滅戰", new UnitCallback() {
             @Override
             public boolean before() {
@@ -4066,7 +4219,21 @@ public class ScriptThread extends SuperScriptThread {
                 山神之森 = false;
             }
         }),"返回");
-        taskAction.addLayerAction("副本選關頁面", new UnitAction("殲滅戰發生", new UnitCallback() {
+        taskAction.addLayerAction("副本選關頁面",new UnitAction("返回", new UnitCallback() {
+            @Override
+            public boolean before() {
+                if (當前BOSS戰){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+
+            @Override
+            public void after() {
+
+            }
+        }), new UnitAction("殲滅戰發生", new UnitCallback() {
             @Override
             public boolean before() {
                 殲滅戰發生 = true;
@@ -4136,10 +4303,9 @@ public class ScriptThread extends SuperScriptThread {
             public boolean before() {
                 if (SettingPreference.getString("BOSS戰體力使用","").equals("等待回復體力")){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return true;
                 }else{
                     return false;
@@ -4154,19 +4320,20 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (obj==null){
-                    String tem = socketClient.sendMessageResult("{\"e\":1002}");
-                    Goods obj = new Gson().fromJson(tem, Goods.class);
-                    if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
-                        鑽石數量 = obj.getData().getBuyDiaCount();
-                        體力藥數量 = obj.getData().getAPItemCount();
+                    if (socketClient.isConnected()){
+                        String tem = socketClient.sendMessageResult("{\"e\":1002}");
+                        Goods obj = new Gson().fromJson(tem, Goods.class);
+                        if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
+                            鑽石數量 = obj.getData().getBuyDiaCount();
+                            體力藥數量 = obj.getData().getAPItemCount();
+                        }
                     }
                 }
                 if (體力藥數量 <= 設置體力藥數量){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return false;
                 }else {
                     if (SettingPreference.getString("BOSS戰體力使用", "").equals("用體力藥")) {
@@ -4222,6 +4389,11 @@ public class ScriptThread extends SuperScriptThread {
      */
     private void initGongGong(){
         g_taskAction = new TaskAction();
+        g_taskAction.addLayerAction("背包擴容頁面","前往倉庫");
+        g_taskAction.addLayerAction("PVP上級頁面","返回");
+        g_taskAction.addLayerAction("循環結束頁面","ok");
+        g_taskAction.addLayerAction("競技場頁面","進入酒館");
+        g_taskAction.addLayerAction("刷裝備選擇頁面","返回");
         g_taskAction.addLayerAction("多日未登錄頁面",多日未登錄獎勵,"領取");
         g_taskAction.addLayerAction("裝備擴容頁面",new UnitAction("關閉", new UnitCallback() {
             @Override
@@ -4364,21 +4536,20 @@ public class ScriptThread extends SuperScriptThread {
             }
         }));
         g_taskAction.addLayerAction("廣告頁面","關閉");
-        g_taskAction.addLayerAction("斷線重連頁面",new UnitAction("重啟", new UnitCallback() {
+        g_taskAction.addLayerAction("網絡波動斷線頁面","重啟");
+        g_taskAction.addLayerAction("通信不安斷線頁面",new UnitAction("他端登錄", new UnitCallback() {
             @Override
             public boolean before() {
-                if (斷線重連時長 != 0){
-                    斷線等待 = true;
-                    斷線等待時間 = System.currentTimeMillis();
-                }
-                return true;
+                斷線等待 = true;
+                斷線等待時間 = System.currentTimeMillis();
+                return false;
             }
 
             @Override
             public void after() {
 
             }
-        }));
+        }),"ok");
         g_taskAction.addLayerAction("重啟動頁面","重啟");
         g_taskAction.addLayerAction("加載頁面","等待");
         g_taskAction.addLayerAction("廣告頁面","關閉");
@@ -4436,7 +4607,7 @@ public class ScriptThread extends SuperScriptThread {
         g_taskAction.addLayerAction("裝備強化頁面","關閉");
         g_taskAction.addLayerAction("強化結果頁面","關閉");
         g_taskAction.addLayerAction("BOSS戰選關頁面","返回");
-        g_taskAction.addLayerAction("PVP準備頁面","返回");
+        g_taskAction.addLayerAction("PVP一般頁面","返回");
         g_taskAction.addLayerAction("PVP確認頁面","返回");
         g_taskAction.addLayerAction("PVP勝利頁面","ok");
         g_taskAction.addLayerAction("PVP失敗頁面","ok");
@@ -5080,10 +5251,9 @@ public class ScriptThread extends SuperScriptThread {
             public boolean before() {
                 if (SettingPreference.getString("殲滅戰體力使用","").equals("等待回復體力")){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return true;
                 }else{
                     return false;
@@ -5098,19 +5268,20 @@ public class ScriptThread extends SuperScriptThread {
             @Override
             public boolean before() {
                 if (obj==null){
-                    String tem = socketClient.sendMessageResult("{\"e\":1002}");
-                    Goods obj = new Gson().fromJson(tem, Goods.class);
-                    if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
-                        鑽石數量 = obj.getData().getBuyDiaCount();
-                        體力藥數量 = obj.getData().getAPItemCount();
+                    if (socketClient.isConnected()){
+                        String tem = socketClient.sendMessageResult("{\"e\":1002}");
+                        Goods obj = new Gson().fromJson(tem, Goods.class);
+                        if (obj.getData().getBuyDiaCount()!=0 || obj.getData().getAPItemCount()!=0){
+                            鑽石數量 = obj.getData().getBuyDiaCount();
+                            體力藥數量 = obj.getData().getAPItemCount();
+                        }
                     }
                 }
                 if (體力藥數量 <= 設置體力藥數量){
                     等待體力回復 = true;
+                    村莊踢箱子_開關 = SettingPreference.getBoolean("村莊踢箱子",false);
                     t_體力回復 = System.currentTimeMillis();
-                    if (SettingPreference.getBoolean("領取成就獎勵",false)){
-                        成就領取_開關 = true;
-                    }
+                    成就領取_開關 = SettingPreference.getBoolean("領取成就獎勵",false);
                     return false;
                 }else{
                     if (SettingPreference.getString("殲滅戰體力使用","").equals("用體力藥")){
@@ -5180,8 +5351,8 @@ public class ScriptThread extends SuperScriptThread {
                 引繼密碼 = SettingPreference.getString("引繼碼密碼","").replace(" ","");
             }
         }
-        if (!斷線等待時長.equals("") && !斷線等待時長.equals("0")){
-            斷線重連時長 = Integer.parseInt(斷線等待時長);
+        if (!SettingPreference.getString("斷線等待時長","").replace(" ","").equals("") && !SettingPreference.getString("斷線等待時長","").replace(" ","").equals("0")){
+            斷線重連時長 = Integer.parseInt(SettingPreference.getString("斷線等待時長","").replace(" ",""));
         }else{
             斷線重連時長 = 0;
         }
@@ -5231,23 +5402,16 @@ public class ScriptThread extends SuperScriptThread {
 
     @Override
     public void run() {
-        if(!ProcessUtils.findModule("zygote","libInjectModule.so")){
-            Shell.Sync.su(new String[]{"cp -Rf /sdcard/inject_x86/* /data/local/tmp", "rm -rf /sdcard/inject_x86/", "rm -f /sdcard/inject_x86.zip",
-                    "chmod 777 /data/local/tmp/inject", "chmod 777 /data/local/tmp/libInjectModule.so", "chmod 777 /data/local/tmp/libQdzElf.so",
-                    "chmod 755 /data/local/tmp/inject.cfg"});
-            Log.e("inject",Shell.Sync.su("/data/local/tmp/inject").toString());
-        }
         if (socketClient == null){
             socketClient = new SocketClient("127.0.0.1",51022);
             socketClient.startDisconnectCheck(false);
         }
-
         村莊踢箱子中 = false;
         scriptStart();
         delay(2000);
         initData();
         initTaskAction();
-        File file = new File("/sdcard/qdzData.txt");
+        File file = new File("/sdcard/Pictures/Screenshots/qdzData.txt");
         try{
             file.delete();
             file.createNewFile();
@@ -5292,16 +5456,19 @@ public class ScriptThread extends SuperScriptThread {
                     }else if (購買食材_開關){
                         curTaskAction = initGouMaiShiCai();
                         showHUDInfo("購買食材");
-                    }else if (每日免費抽_開關){
-                        curTaskAction = initMeiRiChouJiang();
-                        showHUDInfo("每日免費抽");
-                    }else if (一鑽石抽獎_開關){
+                    }else if (每日抽裝備_開關 && !Setting.getBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "每日抽裝備",false)){
+                        curTaskAction = initMeiRiChouZhuangBei();
+                        showHUDInfo("每日抽裝備");
+                    }else if (每日領寶箱_開關 && !Setting.getBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "每日領寶箱",false)){
+                        curTaskAction = initMeiRiLingBaoXiang();
+                        showHUDInfo("每日領寶箱");
+                    }else if (一鑽石抽獎_開關 && !Setting.getBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "一鑽石抽卡",false)){
                         curTaskAction = initYiZuanShiChouKa();
                         showHUDInfo("一鑽石抽卡");
-                    }else if (贈送友情點_開關){
+                    }else if (贈送友情點_開關 && !Setting.getBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "贈送友情點",false)){
                         curTaskAction = initSongYouQingDian();
                         showHUDInfo("贈送友情點");
-                    }else if (友情點買藥_開關){
+                    }else if (友情點買藥_開關 && !Setting.getBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "友情點買藥",false)){
                         curTaskAction = initYouQingDianMaiYao();
                         showHUDInfo("友情點買藥");
                     }else if (騎士團祈禱){
@@ -5373,6 +5540,9 @@ public class ScriptThread extends SuperScriptThread {
                     }else{
                         斷線等待 = false;
                     }
+                }else{
+                    g_taskAction = null;
+                    initGongGong();
                 }
                 /*************************************任務重置*************************************/
                 if (任務重置_開關 && TimingUtil.timingByHour(重置任務時間)){
@@ -5384,7 +5554,7 @@ public class ScriptThread extends SuperScriptThread {
                     任務重置_開關 = true;
                 }
                 /**********************************畫面超時不動重啟遊戲****************************/
-                String newRGB = getPixelColor(16,307);
+                String newRGB = getPixelColor(34,45);
                 if (newRGB.equals(oldRGB)){
                     long shicha = System.currentTimeMillis() - t_卡死重啟;
                     卡死重啟剩餘時間 = 卡死重啟剩餘時間 - shicha;
@@ -5420,23 +5590,22 @@ public class ScriptThread extends SuperScriptThread {
                     }else if (成就領取_開關){
                         curTaskAction = initChengJiuJiangLi();
                         showHUDInfo("成就領取");
-                    }
-//                    else if (村莊踢箱子_開關){
-//                        if (t_村莊踢箱子 == 0){
-//                            t_村莊踢箱子 = System.currentTimeMillis();
-//                        }else{
-//                            curTaskAction = initCunZhuangTiXiangZi();
-//                        }
-//                        showHUDInfo("村莊踢箱子");
-//                    }
-                    else{
+                    }else if (村莊踢箱子_開關){
+                        if (t_村莊踢箱子 == 0){
+                            t_村莊踢箱子 = System.currentTimeMillis();
+                        }else if (System.currentTimeMillis() - t_村莊踢箱子 >= 6*60*60*1000){
+                            curTaskAction = initCunZhuangTiXiangZi();
+                        }else{
+                            村莊踢箱子_開關 = false;
+                        }
+                        showHUDInfo("村莊踢箱子");
+                    }else{
                         curTaskAction = null;
                         showHUDInfo("等待體力回復");
                     }
                 }else{
                     等待體力回復 = false;
                 }
-
                 /***************************************打印日誌***********************************/
                 Log.e(getTag(), "run:" + curLayerName);
                 Log.e(getTag(), "run:" + 體力藥數量);
@@ -5458,10 +5627,16 @@ public class ScriptThread extends SuperScriptThread {
         scriptEnd();
     }
 
-    public void fileWriter(String str,File file) throws IOException{
+    @Override
+    protected void scriptEnd() {
+        socketClient.disconnect();
+        super.scriptEnd();
+    }
+
+    public void fileWriter(String str, File file) throws IOException{
         FileWriter writer = new FileWriter(file,true);
         // 向文件写入内容
-        writer.write(DateUtil.getNowTimestampStr() + "  " + str + "\n");
+        writer.write(DateUtil.getNowTimestampStr() + "  " + str + "\n\n");
         writer.flush();
         writer.close();
     }

@@ -421,6 +421,12 @@ public class MainActivity extends AppCompatActivity {
             FileUtils.copyFilesFromRaw(getApplicationContext(), R.raw.inject_armv7a, "inject_armv7a.zip", "/sdcard/");
             ZipUtil.unpack(new File("/sdcard/inject_armv7a.zip"), new File("/sdcard/inject_armv7a"));
         }
-    }
 
+        if(!ProcessUtils.findModule("zygote","libInjectModule.so")){
+            Shell.Sync.su(new String[]{"cp -Rf /sdcard/inject_x86/* /data/local/tmp", "rm -rf /sdcard/inject_x86/", "rm -f /sdcard/inject_x86.zip",
+                    "chmod 777 /data/local/tmp/inject", "chmod 777 /data/local/tmp/libInjectModule.so", "chmod 777 /data/local/tmp/libQdzElf.so",
+                    "chmod 755 /data/local/tmp/inject.cfg"});
+            Log.e("inject",Shell.Sync.su("/data/local/tmp/inject").toString());
+        }
+    }
 }

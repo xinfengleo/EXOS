@@ -17,6 +17,7 @@ import android.widget.RadioGroup;
 
 import com.fauth.library.core.AuthService;
 import com.fauth.library.entity.AuthResult;
+import com.fauth.library.utils.Preference;
 import com.gamebot.botdemo.R;
 import com.gamebot.botdemo.entity.MsgEvent;
 import com.gamebot.botdemo.script.ScriptThread;
@@ -100,6 +101,16 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         cbZidongjianmiezhan = tap3View.findViewById(R.id.cb_zidongjianmiezhan);
         initEven();
     }
+
+
+    @Override
+    protected int getViewPosition() {
+        return 350;
+    }
+
+
+
+
 
     private void initEven(){
         if (cbCailiaoben.isChecked()){
@@ -266,6 +277,7 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
                 .setSmallIcon(R.mipmap.ic_launcher).build();
         int NOTIFICATION_ID=14545;
         startForeground(NOTIFICATION_ID,notification);
+        Preference preference = new Preference(getApplicationContext(),"dayData");
 //        AuthService  authService = AuthService.getInstance();
 //        initConsole();
     }
