@@ -895,7 +895,7 @@
                                 android:layout_height="30dp"
                                 android:textColor="#fff"
                                 app:defaultIndex="0"
-                                app:listArray="用體力藥,用鑽石購買,停止任務,等待回復體力"
+                                app:listArray="用體力藥,用鑽石購買,等待回復體力"
                                 app:uniqueKey="村莊好感度體力使用"
                                 app:valueFromList="true" />
                         </LinearLayout>
@@ -1002,7 +1002,7 @@
                                 android:layout_height="30dp"
                                 android:textColor="#fff"
                                 app:defaultIndex="0"
-                                app:listArray="用體力藥,用鑽石購買,停止任務,等待回復體力"
+                                app:listArray="用體力藥,用鑽石購買,等待回復體力"
                                 app:uniqueKey="半主線體力使用"
                                 app:valueFromList="true" />
                         </LinearLayout>
