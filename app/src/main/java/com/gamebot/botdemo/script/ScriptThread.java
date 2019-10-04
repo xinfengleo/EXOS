@@ -748,15 +748,21 @@ public class ScriptThread extends SuperScriptThread {
         return taskAction;
     }
 
-
+    /**
+     * 酒館刷親密
+     * @return
+     */
     private TaskAction initJiuGuanShuaQinMi(){
         TaskAction taskAction = new TaskAction();
         taskAction.addLayerAction("酒館頁面","清算营业","關閉列表",
                 new UnitAction("上酒", new UnitCallback() {
             @Override
             public boolean before() {
-
-                return true;
+                if (!Setting.getBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "好感度上酒",false)){
+                    return true;
+                }else{
+                    return false;
+                }
             }
 
             @Override
@@ -767,8 +773,11 @@ public class ScriptThread extends SuperScriptThread {
                 new UnitAction("裝酒", new UnitCallback() {
             @Override
             public boolean before() {
-
-                return true;
+                if (!Setting.getBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "好感度裝酒",false)){
+                    return true;
+                }else{
+                    return false;
+                }
             }
 
             @Override
@@ -779,7 +788,11 @@ public class ScriptThread extends SuperScriptThread {
                 new UnitAction("喇叭", new UnitCallback() {
                     @Override
                     public boolean before() {
-                        return true;
+                        if (!Setting.getBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "好感度音樂",false)){
+                            return true;
+                        }else{
+                            return false;
+                        }
                     }
 
                     @Override
@@ -790,7 +803,11 @@ public class ScriptThread extends SuperScriptThread {
                 new UnitAction("擦桌子", new UnitCallback() {
                     @Override
                     public boolean before() {
-                        return true;
+                        if (!Setting.getBoolean(DateUtil.getNowDateStr() + 保存遊戲名 + "好感度擦桌子",false)){
+                            return true;
+                        }else{
+                            return false;
+                        }
                     }
 
                     @Override
@@ -4929,6 +4946,9 @@ public class ScriptThread extends SuperScriptThread {
         g_taskAction.addLayerAction("殲滅戰失敗頁面","ok");
         g_taskAction.addLayerAction("騎士團聊天頁面","進入騎士團");
         g_taskAction.addLayerAction("騎士團內頁面","返回酒館");
+        g_taskAction.addLayerAction("彩幣兌換頁面","返回");
+        g_taskAction.addLayerAction("金幣兌換頁面","返回");
+        g_taskAction.addLayerAction("銀幣兌換頁面","返回");
     }
 
     /**
