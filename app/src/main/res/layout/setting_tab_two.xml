@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <ScrollView
+        android:id="@+id/sv_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -909,9 +910,9 @@
                                 style="?android:checkboxStyle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="好感度刷滿停止"
+                                android:text="自動切換村莊"
                                 app:defaultValue="false"
-                                app:uniqueKey="村莊刷好感停止" />
+                                app:uniqueKey="村莊切換村莊" />
                         </LinearLayout>
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -1051,6 +1052,7 @@
                     android:paddingRight="6dp"
                     >
                     <com.gamebot.sdk.view.CheckBoxEx
+                        android:id="@+id/cb_meirirenuw"
                         style="?android:checkboxStyle"
                         android:layout_width="0dp"
                         android:layout_weight="1"
@@ -1060,6 +1062,7 @@
                         app:uniqueKey="每日任務" />
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/ll_meirirenwu"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:orientation="vertical"
@@ -1235,20 +1238,20 @@
                 </LinearLayout>
             </LinearLayout>
             <!--提示語-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="15dp">
-                <TextView
-                    style="?android:checkboxStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/yellow"
-                    android:textSize="10dp"
-                    android:text="※"
-                    />
-            </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:paddingLeft="15dp">-->
+                <!--<TextView-->
+                    <!--style="?android:checkboxStyle"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/yellow"-->
+                    <!--android:textSize="10dp"-->
+                    <!--android:text="※"-->
+                    <!--/>-->
+            <!--</LinearLayout>-->
         </LinearLayout>
 
     </ScrollView>

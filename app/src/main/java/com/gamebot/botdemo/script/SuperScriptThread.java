@@ -139,7 +139,7 @@ public abstract class SuperScriptThread extends BaseScriptThread {
                             if (conver) {
                                 unit.setTap(new ArrayList<Integer>(Arrays.asList(-Utils.objToInt(arr.get(1)), Utils.objToInt(arr.get(0)))));
                             } else {
-                                unit.setTap(new ArrayList<Integer>(Arrays.asList(Utils.objToInt(arr.get(1)), Utils.objToInt(arr.get(1)))));
+                                unit.setTap(new ArrayList<Integer>(Arrays.asList(Utils.objToInt(arr.get(1)), Utils.objToInt(arr.get(0)))));
                             }
                         } else {
                             Point pt;

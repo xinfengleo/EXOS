@@ -12,6 +12,12 @@ public class TimingUtil {
         return false;
     }
 
+    /**
+     * 到達指定小時，分鐘后執行
+     * @param Hour
+     * @param Minute
+     * @return
+     */
     public static boolean timingByMinute(int Hour,int Minute){
         if (DateUtil.getHour() == Hour){
             if (DateUtil.getMin() >= Minute){
@@ -24,6 +30,13 @@ public class TimingUtil {
         return false;
     }
 
+    /**
+     * 到達執行小時，指定分鐘，指定秒后執行
+     * @param Hour
+     * @param Minute
+     * @param Second
+     * @return
+     */
     public static boolean timingBySecond(int Hour,int Minute,int Second){
         if (DateUtil.getHour() == Hour){
             if (DateUtil.getMin() == Minute){

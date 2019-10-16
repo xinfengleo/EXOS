@@ -1,7 +1,10 @@
 package com.gamebot.botdemo.script;
 
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.gamebot.botdemo.utils.DateUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -11,6 +14,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,6 +23,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Arrays;
+
+import static android.os.Looper.getMainLooper;
 
 /**
  * Created by dzy on 2018/11/21.
@@ -34,6 +41,7 @@ public class SocketClient {
     private volatile String lastMessage;
     private boolean disconnectChecking=false;
     private boolean connectedBack=false;
+    private File file;
 
     public boolean connect() {
         try {
@@ -59,6 +67,10 @@ public class SocketClient {
             //Log.e(TAG, e.getMessage());
         }
         return false;
+    }
+
+    public interface connectCallback{
+        void isConnect();
     }
 
     public SocketClient(String ip, int port) {
@@ -147,7 +159,6 @@ public class SocketClient {
         if(disconnectChecking){
             return;
         }
-
         new Thread(new DisconnectCheckTh()).start();
     }
 
@@ -216,6 +227,13 @@ public class SocketClient {
 
     public <T> T sendMessageResult(JsonObject msg, Class<T> cls) {
         return sendMessageResult(msg.toString(), cls);
+    }
+    public void fileWriter(String str, File file) throws IOException{
+        FileWriter writer = new FileWriter(file,true);
+        // 向文件写入内容
+        writer.write(DateUtil.getNowTimestampStr() + "  " + str + "\r\n");
+        writer.flush();
+        writer.close();
     }
 
 }

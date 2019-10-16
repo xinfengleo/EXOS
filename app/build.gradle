@@ -15,8 +15,8 @@ android {
         applicationId "com.example.wmsj"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 20082701
-        versionName "20082701"
+        versionCode 20101601
+        versionName "20101601"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "AES_KEY", AES_KEY
     }
