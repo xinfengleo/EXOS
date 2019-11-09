@@ -30,6 +30,7 @@ import com.gamebot.botdemo.utils.FileUtils;
 import com.gamebot.botdemo.utils.HUDManage;
 import com.gamebot.botdemo.view.RadioGroupExd;
 import com.gamebot.botdemo.view.SpinnerExd;
+import com.gamebot.sdk.GameBotConfig;
 import com.gamebot.sdk.client.BaseScriptThread;
 import com.gamebot.sdk.preference.SettingPreference;
 import com.gamebot.sdk.service.BaseFloatingViewService;
@@ -73,9 +74,9 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
     private FloatingViewService self;
     private View tap1View,tap2View,tap3View,tabMainView;
     private RadioGroupExd selectShuatu,xuankashu;
-    private LinearLayout qianghuaben,jinhuaben,zhuangbeirenwu,bosszhan,llCailiaoben,llJinbiben,llBanzidongzhuxian,llShuahaogandu,llZidongjianmiezhan;
-    private LinearLayout yizhangka,liangzhangka,sanzhangka,llMeirirenwu;
-    private CheckBoxEx cbCailiaoben,cbJinbiben,cbShuahaogandu,cbBanzidongzhuxian,cbZidongjianmiezhan,cbMeirirenuw;
+    private LinearLayout qianghuaben,jinhuaben,zhuangbeirenwu,bosszhan,llCailiaoben,llJinbiben,llBanzidongzhuxian,llShuahaogandu,llZidongjianmiezhan,llJierihuodong;
+    private LinearLayout yizhangka,liangzhangka,sanzhangka,llMeirirenwu,llJieshouyaoqing;
+    private CheckBoxEx cbCailiaoben,cbJinbiben,cbShuahaogandu,cbBanzidongzhuxian,cbZidongjianmiezhan,cbMeirirenuw,cbJierihuodong,cbJieshouyaoqing;
     private ScrollView svMain;
 
     @Override
@@ -103,12 +104,16 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         llBanzidongzhuxian = tap2View.findViewById(R.id.ll_banzidongzhuxian);
         llZidongjianmiezhan = tap3View.findViewById(R.id.ll_zidongjianmiezhan);
         llMeirirenwu = tap2View.findViewById(R.id.ll_meirirenwu);
+        llJierihuodong = tap2View.findViewById(R.id.ll_jierihuodong);
+        llJieshouyaoqing = tap2View.findViewById(R.id.ll_jieshouyaoqing);
         cbCailiaoben = tap2View.findViewById(R.id.cb_cailiaoben);
         cbJinbiben = tap2View.findViewById(R.id.cb_jinbiben);
         cbShuahaogandu = tap2View.findViewById(R.id.cb_shuahaogandu);
         cbBanzidongzhuxian = tap2View.findViewById(R.id.cb_banzidongzhuxian);
         cbZidongjianmiezhan = tap3View.findViewById(R.id.cb_zidongjianmiezhan);
+        cbJierihuodong = tap2View.findViewById(R.id.cb_jierihuodong);
         cbMeirirenuw = tap2View.findViewById(R.id.cb_meirirenuw);
+        cbJieshouyaoqing = tap2View.findViewById(R.id.cb_jieshouyaoqing);
         svMain = tap2View.findViewById(R.id.sv_main);
         initEven();
     }
@@ -125,6 +130,12 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
             llCailiaoben.setVisibility(VISIBLE);
         }else{
             llCailiaoben.setVisibility(GONE);
+        }
+
+        if (cbJieshouyaoqing.isChecked()){
+            llJieshouyaoqing.setVisibility(VISIBLE);
+        }else{
+            llJieshouyaoqing.setVisibility(GONE);
         }
 
         if (cbJinbiben.isChecked()){
@@ -154,6 +165,11 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
             llZidongjianmiezhan.setVisibility(VISIBLE);
         }else{
             llZidongjianmiezhan.setVisibility(GONE);
+        }
+        if (cbJierihuodong.isChecked()){
+            llJierihuodong.setVisibility(VISIBLE);
+        }else{
+            llJierihuodong.setVisibility(GONE);
         }
 
         switch (selectShuatu.getIndex()){
@@ -273,6 +289,16 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
                 }
             }
         });
+        cbJierihuodong.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    llJierihuodong.setVisibility(VISIBLE);
+                }else{
+                    llJierihuodong.setVisibility(GONE);
+                }
+            }
+        });
         cbJinbiben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -280,6 +306,16 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
                     llJinbiben.setVisibility(VISIBLE);
                 }else{
                     llJinbiben.setVisibility(GONE);
+                }
+            }
+        });
+        cbJieshouyaoqing.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    llJieshouyaoqing.setVisibility(VISIBLE);
+                }else{
+                    llJieshouyaoqing.setVisibility(GONE);
                 }
             }
         });
@@ -349,8 +385,6 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
                 .setSmallIcon(R.mipmap.ic_launcher).build();
         int NOTIFICATION_ID=14545;
         startForeground(NOTIFICATION_ID,notification);
-        Preference preference = new Preference(getApplicationContext(),"dayData");
-//        AuthService  authService = AuthService.getInstance();
 //        initConsole();
     }
 
@@ -398,8 +432,7 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         authService.startHeartbeat(new AuthService.AuthHeartbeatCallBack() {
             @Override
             public void onExpire(String s, AuthResult authResult, int i) {
-                onScriptStop();
-
+                onScriptEnd();
                 if (i > HEARTBEAT_TIME) {
                     showMsgBox(getString(R.string.app_name), "授權驗證失效！");
                 } else {
@@ -442,59 +475,99 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         使用卡號 = "";
         使用卡號 = SettingPreference.getString("使用卡號","").replace(" ","");
         Shell.Sync.su();
-        if (使用卡號.equals("")){
-            start("");
-        }else{
-            start(使用卡號);
-        }
+        start(使用卡號);
     }
 
     private void start(String cardNum){
-        authService.sendAuth(cardNum, new AuthService.AuthCallBack() {
-            @Override
-            public void onResponse(AuthResult result) {
-                new Handler(getApplicationContext().getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!AuthService.getInstance().isAuth()){
-                            showMsgBox(getString(R.string.app_name), "使用期限到期");
-                            //            Intent dialogIntent = newwmsj Intent(getBaseContext(), MainActivity.class);
-                            //            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            //            getApplication().startActivity(dialogIntent);
-                            stopScript();
-                        }else{
-                            startService();
-                            startHeartbeat();
-                            _scriptThread = new ScriptThread(getApplicationContext(), self);
-                            _scriptThread.start();
-                        }
-                        sendRunStatusJson(1);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Object o) {
-                new Handler(getApplicationContext().getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        String text = "";
-                        if(o==null){
-                            text="驗證返回數據為空!";
-                        }else if(o instanceof AuthResult){
-                            text=authService.getErrorMsg(((AuthResult)o).getStatus());
-                            if(StringUtils.isEmpty(text)){
-                                text=((AuthResult)o).getMsg();
+        if (GameBotConfig.init(getApplicationContext(), "DM29CRS4F7TNHJW2", "HRF5RJ9RFCS5TKGBN2ET56YVYR8E8FB73446LVJY")) {
+            authService.sendAuth(cardNum, new AuthService.AuthCallBack() {
+                @Override
+                public void onResponse(AuthResult result) {
+                    new Handler(getApplicationContext().getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(!authService.isAuth()){
+                                showMsgBox(getString(R.string.app_name), "使用期限到期");
+                                //            Intent dialogIntent = newwmsj Intent(getBaseContext(), MainActivity.class);
+                                //            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                //            getApplication().startActivity(dialogIntent);
+                                onScriptEnd();
+                            }else{
+                                startService();
+                                startHeartbeat();
+                                _scriptThread = new ScriptThread(getApplicationContext(), self);
+                                _scriptThread.start();
                             }
-                        }else if(o instanceof String){
-                            text=(String) o;
+                            sendRunStatusJson(1);
                         }
-                        showMsgBox(getString(R.string.app_name),text);
-                        stopScript();
-                    }
-                });
-            }
-        });
+                    });
+                }
+
+                @Override
+                public void onFailure(Object o) {
+                    new Handler(getApplicationContext().getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            String text = "";
+                            if(o==null){
+                                text="驗證返回數據為空!";
+                            }else if(o instanceof AuthResult){
+                                text=((AuthResult)o).getStatus().toString();
+                                if(StringUtils.isEmpty(text)){
+                                    text=((AuthResult)o).getMsg();
+                                }else if (text.equals("2001")){
+                                    showMsgBox(getString(R.string.app_name), "版本號錯誤！");
+                                }else if(text.equals("2002")){
+                                    showMsgBox(getString(R.string.app_name), "免費登入超過次數！");
+                                }else if(text.equals("2003")){
+                                    showMsgBox(getString(R.string.app_name), "卡號不存在！");
+                                }else if(text.equals("2004")){
+                                    showMsgBox(getString(R.string.app_name), "請輸入密碼！");
+                                }else if(text.equals("2005")){
+                                    showMsgBox(getString(R.string.app_name), "卡號過期！");
+                                }else if(text.equals("2006")){
+                                    showMsgBox(getString(R.string.app_name), "已經在其他設備登入！");
+                                }else if(text.equals("2007")){
+                                    showMsgBox(getString(R.string.app_name), "當前卡號已達上限值！");
+                                }else if(text.equals("2008")){
+                                    showMsgBox(getString(R.string.app_name), "啟動碼重複登入！");
+                                }else if(text.equals("2009")){
+                                    showMsgBox(getString(R.string.app_name), "密碼錯誤！");
+                                }else if(text.equals("2010")){
+                                    showMsgBox(getString(R.string.app_name), "簽名驗證失敗！");
+                                }else if(text.equals("2011")){
+                                    showMsgBox(getString(R.string.app_name), "參數錯誤！");
+                                }else if(text.equals("2012")){
+                                    showMsgBox(getString(R.string.app_name), "token驗證失敗！");
+                                }else if(text.equals("2013")){
+                                    showMsgBox(getString(R.string.app_name), "設備信息與token不符！");
+                                }else if(text.equals("2014")){
+                                    showMsgBox(getString(R.string.app_name), "卡號還未激活！");
+                                }else if(text.equals("2015")){
+                                    showMsgBox(getString(R.string.app_name), "已達單日免費次數上限！");
+                                }else if(text.equals("2016")){
+                                    showMsgBox(getString(R.string.app_name), "免費體驗模式已關閉！");
+                                }else if(text.equals("2017")){
+                                    showMsgBox(getString(R.string.app_name), "解碼失敗");
+                                }else{
+                                    showMsgBox(getString(R.string.app_name),"伺服器連接失敗");
+                                }
+                            }else if(o instanceof String){
+                                text=(String) o;
+                                showMsgBox(getString(R.string.app_name),text);
+                            }
+                            onScriptEnd();
+                        }
+                    });
+                }
+            });
+        } else {
+            SuperToast st=SuperToast.create(getApplicationContext(),getString(R.string.initialize_failed), 5000);
+            st.setGravity(Gravity.TOP);
+            st.show();
+            onScriptEnd();
+        }
+
     }
 
     @Override
@@ -506,6 +579,17 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         authService.stopHearbeat();
         killServer();
 //        sendRunStatusJson(2);
+    }
+
+    @Override
+    protected void stopScript() {
+        super.stopScript();
+        if (_scriptThread != null) {
+            _scriptThread.interrupt();
+            setRunning(false);
+        }
+        authService.stopHearbeat();
+        killServer();
     }
 
     @Override
@@ -548,22 +632,6 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
             setRunning(false);
             _scriptThread = null;
         });
-    }
-
-    @Override
-    protected void stopScript() {
-        super.stopScript();
-        if (_scriptThread != null) {
-            _scriptThread.interrupt();
-        }
-        authService.stopHearbeat();
-        killServer();
-        hudManage.hideHUD("careEndDate");
-        hudManage.hideHUD("move");
-        hudManage.hideHUD("info");
-        hudManage.hideHUD("time");
-        使用卡號 = "";
-        使用卡號 = SettingPreference.getString("使用卡號","").replace(" ","");
     }
 
     @Override

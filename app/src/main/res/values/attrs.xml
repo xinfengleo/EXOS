@@ -18,4 +18,11 @@
         <attr name="listArray"/>
     </declare-styleable>
 
+    <declare-styleable name="LinearLayoutExd">
+        <attr name="defaultIndex"/>
+        <attr name="uniqueKey"/>
+        <attr name="valueFromList"/>
+        <attr name="listArray"/>
+    </declare-styleable>
+
 </resources>

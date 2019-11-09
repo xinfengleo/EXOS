@@ -303,6 +303,208 @@
                         app:defaultValue="false"
                         app:uniqueKey="村莊踢箱子" />
                 </LinearLayout>
+                <!--殲滅戰邀請-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="6dp"
+                    >
+                    <com.gamebot.sdk.view.CheckBoxEx
+                        android:id="@+id/cb_jieshouyaoqing"
+                        style="?android:checkboxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="接受殲滅戰邀請"
+                        app:defaultValue="false"
+                        app:uniqueKey="接受殲滅戰邀請" />
+                    <!--殲滅戰邀請類型-->
+                    <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:id="@+id/ll_jieshouyaoqing"
+                        android:orientation="vertical"
+                        >
+                        <LinearLayout
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:paddingLeft="10dp"
+                            android:orientation="vertical"
+                            >
+                            <!--紅魔總選項-->
+                            <com.gamebot.sdk.view.CheckBoxEx
+                                android:paddingLeft="12dp"
+                                style="?android:checkboxStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="紅魔"
+                                app:defaultValue="false"
+                                app:uniqueKey="殲滅戰邀請紅魔"/>
+                            <!--紅魔等級-->
+                            <LinearLayout
+                                android:layout_height="wrap_content"
+                                android:layout_width="match_parent"
+                                android:paddingLeft="15dp"
+                                android:orientation="horizontal"
+                                >
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Normal"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請紅魔normal" />
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hard"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請紅魔hard" />
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Extreme"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請紅魔extreme" />
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hell"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請紅魔hell" />
+                            </LinearLayout>
+                        </LinearLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/white"
+                            />
+                        <LinearLayout
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:paddingLeft="10dp"
+                            android:orientation="vertical"
+                            >
+                            <!--灰魔總選項-->
+                            <com.gamebot.sdk.view.CheckBoxEx
+                                android:paddingLeft="12dp"
+                                style="?android:checkboxStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="灰魔"
+                                app:defaultValue="false"
+                                app:uniqueKey="殲滅戰邀請灰魔" />
+                            <!--灰魔等級-->
+                            <LinearLayout
+                                android:layout_height="wrap_content"
+                                android:layout_width="match_parent"
+                                android:paddingLeft="15dp"
+                                android:orientation="horizontal"
+                                >
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Normal"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請灰魔normal" />
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hard"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請灰魔hard" />
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Extreme"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請灰魔extreme" />
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hell"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請灰魔hell" />
+                            </LinearLayout>
+                        </LinearLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/white"
+                            />
+                        <LinearLayout
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:paddingLeft="10dp"
+                            android:orientation="vertical"
+                            >
+                            <!--魔獸總選項-->
+                            <com.gamebot.sdk.view.CheckBoxEx
+                                android:paddingLeft="12dp"
+                                style="?android:checkboxStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="魔獸"
+                                app:defaultValue="false"
+                                app:uniqueKey="殲滅戰邀請魔獸" />
+                            <!--魔獸等級-->
+                            <LinearLayout
+                                android:layout_height="wrap_content"
+                                android:layout_width="match_parent"
+                                android:paddingLeft="15dp"
+                                android:orientation="horizontal"
+                                >
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Normal"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請魔獸normal" />
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hard"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請魔獸hard" />
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Extreme"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請魔獸extreme" />
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hell"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="殲滅戰邀請魔獸hell" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
                 <!--提示語-->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -535,27 +737,6 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingLeft="20dp"
-                            >
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="體力不足時："
-                                />
-                            <com.gamebot.botdemo.view.SpinnerExd
-                                style="?android:spinnerStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="30dp"
-                                android:textColor="#fff"
-                                app:defaultIndex="0"
-                                app:listArray="用體力藥,用鑽石購買,等待回復體力"
-                                app:uniqueKey="金幣本體力使用"
-                                app:valueFromList="true" />
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:paddingLeft="20dp"
                             >
@@ -566,48 +747,6 @@
                                 android:text="智能降階（失敗時觸發）"
                                 app:defaultValue="false"
                                 app:uniqueKey="金幣本智能降階" />
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:paddingLeft="20dp"
-                            >
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="選擇金幣本時間段"
-                                />
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                >
-                                <com.gamebot.sdk.view.CheckBoxEx
-                                    style="?android:checkboxStyle"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="wrap_content"
-                                    android:text="6-8點"
-                                    app:defaultValue="false"
-                                    app:uniqueKey="金幣本6-8點" />
-                                <com.gamebot.sdk.view.CheckBoxEx
-                                    style="?android:checkboxStyle"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="wrap_content"
-                                    android:text="11-13點"
-                                    app:defaultValue="false"
-                                    app:uniqueKey="金幣本11-13點" />
-                                <com.gamebot.sdk.view.CheckBoxEx
-                                    style="?android:checkboxStyle"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="wrap_content"
-                                    android:text="18-20點"
-                                    app:defaultValue="false"
-                                    app:uniqueKey="金幣本19-21點" />
-                            </LinearLayout>
                         </LinearLayout>
                         <TextView
                             android:layout_width="match_parent"
@@ -747,27 +886,6 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingLeft="20dp"
-                            >
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="體力不足時："
-                                />
-                            <com.gamebot.botdemo.view.SpinnerExd
-                                style="?android:spinnerStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="30dp"
-                                android:textColor="#fff"
-                                app:defaultIndex="0"
-                                app:listArray="用體力藥,用鑽石購買,等待回復體力"
-                                app:uniqueKey="材料本體力使用"
-                                app:valueFromList="true" />
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:paddingLeft="20dp"
                             >
@@ -808,27 +926,6 @@
                             android:text="村莊好感度"
                             app:defaultValue="false"
                             app:uniqueKey="村莊好感度" />
-                        <!--<LinearLayout-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_weight="1"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--&gt;-->
-                        <!--<TextView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:text="執行順序："-->
-                        <!--/>-->
-                        <!--<com.gamebot.botdemo.view.SpinnerExd-->
-                        <!--style="?android:spinnerStyle"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="30dp"-->
-                        <!--android:textColor="#fff"-->
-                        <!--app:defaultIndex="0"-->
-                        <!--app:listArray="1,2,3,4,5,6"-->
-                        <!--app:uniqueKey="村莊好感度順序"-->
-                        <!--app:valueFromList="true" />-->
-                        <!--</LinearLayout>-->
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -854,7 +951,7 @@
                                 android:layout_height="30dp"
                                 android:textColor="#fff"
                                 app:defaultIndex="0"
-                                app:listArray="巴尼亞村,達瑪麗鎮,塔拉,貝塞爾鎮,奧登村,里奧內斯城"
+                                app:listArray="第一村,第二村,第三村,第四村,第五村,第六村"
                                 app:uniqueKey="村莊好感度村莊"
                                 app:valueFromList="true" />
                         </LinearLayout>
@@ -957,27 +1054,6 @@
                             android:text="半自動主線"
                             app:defaultValue="false"
                             app:uniqueKey="半自動主線" />
-                        <!--<LinearLayout-->
-                            <!--android:layout_width="0dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:orientation="horizontal"-->
-                            <!--&gt;-->
-                            <!--<TextView-->
-                                <!--android:layout_width="wrap_content"-->
-                                <!--android:layout_height="wrap_content"-->
-                                <!--android:text="執行順序："-->
-                                <!--/>-->
-                            <!--<com.gamebot.botdemo.view.SpinnerExd-->
-                                <!--style="?android:spinnerStyle"-->
-                                <!--android:layout_width="wrap_content"-->
-                                <!--android:layout_height="30dp"-->
-                                <!--android:textColor="#fff"-->
-                                <!--app:defaultIndex="0"-->
-                                <!--app:listArray="1,2,3,4,5,6"-->
-                                <!--app:uniqueKey="半自動主線順序"-->
-                                <!--app:valueFromList="true" />-->
-                        <!--</LinearLayout>-->
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -1030,6 +1106,244 @@
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
+                <!--節日活動-->
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
+                        >
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            android:id="@+id/cb_jierihuodong"
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="萬聖節活動"
+                            app:defaultValue="false"
+                            app:uniqueKey="萬聖節活動" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ll_jierihuodong"
+                        android:orientation="vertical"
+                        >
+                        <!--活動主線-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingLeft="12dp"
+                            >
+                            <com.gamebot.sdk.view.CheckBoxEx
+                                style="?android:checkboxStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="萬聖節活動主線"
+                                app:defaultValue="false"
+                                app:uniqueKey="萬聖節活動主線" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingLeft="20dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="體力不足時："
+                                    />
+                                <com.gamebot.botdemo.view.SpinnerExd
+                                    style="?android:spinnerStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:textColor="#fff"
+                                    app:defaultIndex="0"
+                                    app:listArray="用體力藥,用鑽石購買,等待回復體力"
+                                    app:uniqueKey="活動任務體力使用"
+                                    app:valueFromList="true" />
+                            </LinearLayout>
+                        </LinearLayout>
+                        <!--活動殲滅戰副本-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            >
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingLeft="12dp"
+                                >
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="萬聖節活動殲滅戰"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="萬聖節活動殲滅戰" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingLeft="22dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="殲滅戰類型："
+                                    />
+                                <com.gamebot.botdemo.view.SpinnerExd
+                                    style="?android:spinnerStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:textColor="#fff"
+                                    app:defaultIndex="0"
+                                    app:listArray="紅魔,灰魔,魔獸"
+                                    app:uniqueKey="萬聖節活動殲滅戰類型"
+                                    app:valueFromList="true" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingLeft="22dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="殲滅戰等級："
+                                    />
+                                <com.gamebot.botdemo.view.SpinnerExd
+                                    style="?android:spinnerStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:textColor="#fff"
+                                    app:defaultIndex="0"
+                                    app:listArray="normal,hard,extreme"
+                                    app:uniqueKey="萬聖節活動殲滅戰等級"
+                                    app:valueFromList="true" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingLeft="20dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="殲滅戰隊伍："
+                                    />
+                                <com.gamebot.botdemo.view.SpinnerExd
+                                    style="?android:spinnerStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:textColor="#fff"
+                                    app:defaultIndex="0"
+                                    app:listArray="第一隊,第二隊,第三隊,第四隊,第五隊"
+                                    app:uniqueKey="活動殲滅戰隊伍"
+                                    app:valueFromList="true" />
+                            </LinearLayout>
+                        </LinearLayout>
+                        <!--活動普通副本-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            >
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingLeft="12dp"
+                                >
+                                <com.gamebot.sdk.view.CheckBoxEx
+                                    style="?android:checkboxStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="萬聖節活動普通副本"
+                                    app:defaultValue="false"
+                                    app:uniqueKey="萬聖節活動普通副本" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingLeft="22dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="普通本等級："
+                                    />
+                                <com.gamebot.botdemo.view.SpinnerExd
+                                    style="?android:spinnerStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:textColor="#fff"
+                                    app:defaultIndex="0"
+                                    app:listArray="easy,normal,hard"
+                                    app:uniqueKey="萬聖節活動普通本等級"
+                                    app:valueFromList="true" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingLeft="20dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="普通本隊伍："
+                                    />
+                                <com.gamebot.botdemo.view.SpinnerExd
+                                    style="?android:spinnerStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:textColor="#fff"
+                                    app:defaultIndex="0"
+                                    app:listArray="第一隊,第二隊,第三隊,第四隊,第五隊"
+                                    app:uniqueKey="活動普通本隊伍"
+                                    app:valueFromList="true" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingLeft="20dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="普通本體力不足時："
+                                    />
+                                <com.gamebot.botdemo.view.SpinnerExd
+                                    style="?android:spinnerStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:textColor="#fff"
+                                    app:defaultIndex="0"
+                                    app:listArray="用體力藥,用鑽石購買,等待回復體力"
+                                    app:uniqueKey="活動普通本體力使用"
+                                    app:valueFromList="true" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
             <!--每日任務-->
             <LinearLayout
@@ -1067,7 +1381,7 @@
                     android:layout_width="match_parent"
                     android:orientation="vertical"
                     >
-                    <!--材料本-->
+                    <!--sp副本-->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1078,7 +1392,7 @@
                             style="?android:checkboxStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="材料本設定："/>
+                            android:text="SP副本設定："/>
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -1098,8 +1412,8 @@
                                     android:layout_height="30dp"
                                     android:textColor="#fff"
                                     app:defaultIndex="0"
-                                    app:listArray="強化,進化,金幣"
-                                    app:uniqueKey="日常材料本選類型"
+                                    app:listArray="進化,強化"
+                                    app:uniqueKey="日常SP副本選本"
                                     app:valueFromList="true" />
                             </LinearLayout>
                             <LinearLayout
@@ -1114,8 +1428,31 @@
                                     android:layout_height="30dp"
                                     android:textColor="#fff"
                                     app:defaultIndex="0"
-                                    app:listArray="第一階,第二階,第三階"
-                                    app:uniqueKey="日常材料本選等級"
+                                    app:listArray="體力,筋力,速力"
+                                    app:uniqueKey="日常SP副本選類型"
+                                    app:valueFromList="true" />
+                            </LinearLayout>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            >
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="5dp"
+                                >
+                                <com.gamebot.botdemo.view.SpinnerExd
+                                    style="?android:spinnerStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:textColor="#fff"
+                                    app:defaultIndex="0"
+                                    app:listArray="第一階,第二階,第三階,第四階,第五階,第六階"
+                                    app:uniqueKey="日常SP副本選等級"
                                     app:valueFromList="true" />
                             </LinearLayout>
                         </LinearLayout>
@@ -1237,21 +1574,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-            <!--提示語-->
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal"-->
-                <!--android:paddingLeft="15dp">-->
-                <!--<TextView-->
-                    <!--style="?android:checkboxStyle"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:textColor="@color/yellow"-->
-                    <!--android:textSize="10dp"-->
-                    <!--android:text="※"-->
-                    <!--/>-->
-            <!--</LinearLayout>-->
         </LinearLayout>
 
     </ScrollView>

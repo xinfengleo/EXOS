@@ -462,21 +462,29 @@ public abstract class SuperScriptThread extends BaseScriptThread {
         return result;
     }
 
-
-    protected void showTimeInfo(String text) {
-        new Handler(mContext.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                hudManage.showHUD("time", text, 13, 200, 20, 200, 649, "#ffffff","#80000000",0);
-            }
-        });
-    }
-
     protected void showMOVEInfo(String text) {
         new Handler(mContext.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 hudManage.showHUD("move", text, 13, 200, 20, 0, 1209, "#ffffff","#80000000",0);
+            }
+        });
+    }
+
+    protected void showNumInfo(String text) {
+        new Handler(mContext.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                hudManage.showHUD("num", text, 13, 50, 20, 619, 1209, "#ffffff","#80000000",0);
+            }
+        });
+    }
+
+    protected void showDiaInfo(String text) {
+        new Handler(mContext.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                hudManage.showHUD("diamond", text, 13, 50, 20, 669, 1209, "#ffffff","#80000000",0);
             }
         });
     }

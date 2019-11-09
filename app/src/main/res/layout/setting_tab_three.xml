@@ -111,6 +111,34 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="強化本類型："
+                            />
+                        <LinearLayout
+                            android:layout_height="30dp"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:paddingLeft="5dp"
+                            >
+                            <com.gamebot.botdemo.view.SpinnerExd
+                                style="?android:spinnerStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#fff"
+                                app:defaultIndex="0"
+                                app:listArray="體力,筋力,速力"
+                                app:uniqueKey="強化本類型"
+                                app:valueFromList="true" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="12dp"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="選擇隊伍："
                             />
                         <com.gamebot.botdemo.view.SpinnerExd
@@ -198,6 +226,34 @@
                                 app:defaultIndex="0"
                                 app:listArray="第一階,第二階,第三階,第四階,第五階,第六階"
                                 app:uniqueKey="進化本等級"
+                                app:valueFromList="true" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="12dp"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="進化本類型："
+                            />
+                        <LinearLayout
+                            android:layout_height="30dp"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:paddingLeft="5dp"
+                            >
+                            <com.gamebot.botdemo.view.SpinnerExd
+                                style="?android:spinnerStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#fff"
+                                app:defaultIndex="0"
+                                app:listArray="體力,筋力,速力"
+                                app:uniqueKey="進化本類型"
                                 app:valueFromList="true" />
                         </LinearLayout>
                     </LinearLayout>
@@ -643,6 +699,7 @@
                     android:text="包滿處理"
                     android:padding="5dp"
                     />
+                <!--裝備滿-->
                 <LinearLayout
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
@@ -707,6 +764,45 @@
                             android:text="SSR"
                             app:defaultValue="false"
                             app:uniqueKey="品級SSR" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:paddingLeft="20dp"
+                        >
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="UR"
+                            app:defaultValue="false"
+                            app:uniqueKey="品級UR" />
+                        <TextView
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            />
+                        <TextView
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            />
+                        <TextView
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            />
+                        <TextView
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            />
                     </LinearLayout>
                     <TextView
                         android:layout_height="wrap_content"
@@ -828,7 +924,7 @@
                             app:uniqueKey="分解強化裝備" />
                     </LinearLayout>
                 </LinearLayout>
-
+                <!--背包滿-->
                 <LinearLayout
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
@@ -855,25 +951,146 @@
                             app:defaultValue="false"
                             app:uniqueKey="出售金幣箱子" />
                     </LinearLayout>
-                    <!--提示語-->
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                </LinearLayout>
+            </LinearLayout>
+            <!--LINE通知-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:background="@color/title_backColor"
+                    android:text="LINE通知"
+                    android:padding="5dp"
+                    />
+                <!--角色名稱-->
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
                         android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:text="角色名稱："
+                        android:padding="5dp"
+                        />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        app:uniqueKey="LINE角色名" />
+                </LinearLayout>
+                <!--通知碼-->
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="通知碼："
+                        android:padding="5dp"
+                        />
+                    <com.gamebot.sdk.view.EditTextEx
+                        style="?android:editTextStyle"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        app:uniqueKey="LINE通知碼" />
+                </LinearLayout>
+                <!--教學地址-->
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="通知碼：ai.igcps.com/help/php?"
+                        android:padding="5dp"
+                        />
+                    <Button
+                        style="?android:editTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:text="複製"
+                        android:padding="2dp"
+                        android:gravity="center"
+                        android:background="@color/colorAccent"
+                        />
+                </LinearLayout>
+                <!--通知情況-->
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="以下情況進行通知："
+                        android:padding="5dp"
+                        />
+                    <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
                         android:orientation="horizontal"
-                        android:paddingLeft="15dp">
-                        <TextView
+                        android:paddingLeft="10dp"
+                        >
+                        <com.gamebot.sdk.view.CheckBoxEx
                             style="?android:checkboxStyle"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/yellow"
-                            android:textSize="10dp"
-                            android:text="※當無金幣箱子時，勾選鑽石購買才會觸發，未勾選狀態下無寶箱可出售，任務會停止"
-                            />
+                            android:text="出售及分解後仍然包滿"
+                            app:defaultValue="false"
+                            app:uniqueKey="LINE包滿" />
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="戰鬥失敗時"
+                            app:defaultValue="false"
+                            app:uniqueKey="LINE戰鬥失敗" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:paddingLeft="10dp"
+                        >
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="斷線重連時"
+                            app:defaultValue="false"
+                            app:uniqueKey="LINE斷線" />
+                        <com.gamebot.sdk.view.CheckBoxEx
+                            style="?android:checkboxStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="成功進入到殲滅戰後"
+                            app:defaultValue="false"
+                            app:uniqueKey="LINE殲滅戰" />
                     </LinearLayout>
                 </LinearLayout>
-
             </LinearLayout>
-
         </LinearLayout>
 
     </ScrollView>

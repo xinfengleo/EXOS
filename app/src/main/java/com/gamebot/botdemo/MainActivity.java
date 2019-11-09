@@ -1,8 +1,10 @@
 package com.gamebot.botdemo;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -19,6 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -53,6 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -69,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
     private static String CHECK_VERSION_URL = "http://wmsj.ai.igcps.com/index/auth/get_version_link";
     @BindView(R.id.btn_start)
     ImageView startBtn;
+    @BindView(R.id.btn_restart)
+    ImageView restartBtn;
     @BindView(R.id.version_text)
     TextView versionText;
     AuthService authService;
@@ -76,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private LoadDialog loadDialog;
     private RelativeLayout rlMain;
     private boolean flag = false;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,19 +96,18 @@ public class MainActivity extends AppCompatActivity {
         checkScreenWH();
         initSocket();
         authService=AuthService.getInstance();
-        loadDialog = new LoadDialog(MainActivity.this, R.style.MyDialogStyle);
         rlMain = (RelativeLayout)findViewById(R.id.rl_main);
+        if (isServiceRunning(this,"com.gamebot.botdemo.service.FloatingViewService")){
+            restartBtn.setVisibility(View.VISIBLE);
+            startBtn.setVisibility(View.GONE);
+        }
         checkOrientation();
         checkVersion();
-        MobclickAgent.onProfileSignIn(authService.getDevId());
-    }
-
-    private void showDialog(boolean flag){
-        if (flag){
-            loadDialog.show();
-        }else{
-            loadDialog.dismiss();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            checkOverlays();
         }
+        showWaiting();
+        MobclickAgent.onProfileSignIn(authService.getDevId());
     }
 
     private void checkOrientation(){
@@ -303,53 +309,20 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_start)
     public void startService() {
-        showDialog(true);
-        if (GameBotConfig.init(getApplicationContext(), "DM29CRS4F7TNHJW2", "HRF5RJ9RFCS5TKGBN2ET56YVYR8E8FB73446LVJY")) {
-            Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
-            stopService(intent);
-            startService(intent);
-            showDialog(false);
-            finish();
-        } else {
-            showDialog(false);
-            SuperToast st=SuperToast.create(getApplicationContext(),getString(R.string.initialize_failed), 5000);
-            st.setGravity(Gravity.TOP);
-            st.show();
-        }
+        progressDialog.show();
+        Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
+        startService(intent);
+        progressDialog.cancel();
+        finish();
+    }
 
-
-//        authService.sendAuth("ZHAND09C07213A197C7C", newwmsj AuthService.AuthCallBack() {
-//            @Override
-//            public void onResponse(AuthResult result) {
-//                newwmsj Handler(getApplicationContext().getMainLooper()).post(newwmsj Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //Toast.makeText(getApplicationContext(),"目前為免費測試中,敬請體驗!",Toast.LENGTH_LONG);
-//                        SuperToast st=SuperToast.create(getApplicationContext(), "目前為免費測試中,敬請體驗! 剩餘體驗時間:"+authService.getCardMinutesOfTwo()+"分鐘", 5000);
-//                        st.setGravity(Gravity.TOP);
-//                        st.show();
-//                        Intent intent = newwmsj Intent(MainActivity.this, FloatingViewService.class);
-//                        startService(intent);
-//                        finish();
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onFailure(AuthResult result) {
-//                newwmsj Handler(getApplicationContext().getMainLooper()).post(newwmsj Runnable() {
-//                    @Override
-//                    public void run() {
-//                        String jsonStr =FileUtils.readTextFromAESRaw(getApplicationContext(), R.raw.auth_error_msg);
-//                        HashMap<String,String> msg=newwmsj Gson().fromJson(jsonStr,newwmsj HashMap<String,String>().getClass());
-//                        String text=msg.get(result.getStatus().toString());
-//                        SuperToast.create(getApplicationContext(), text, 6000).show();
-//                    }
-//                });
-//            }
-//        });
-
-
+    @OnClick(R.id.btn_restart)
+    public void restartService() {
+        progressDialog.show();
+        Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
+        startService(intent);
+        progressDialog.cancel();
+        finish();
     }
 
     @OnTouch(R.id.btn_start)
@@ -359,6 +332,17 @@ public class MainActivity extends AppCompatActivity {
         } else if(motionEvent.getAction() == MotionEvent.ACTION_MOVE){
         } else if (motionEvent.getAction() == MotionEvent.ACTION_UP){
             startBtn.setAlpha(1.0f);
+        }
+        return false;
+    }
+
+    @OnTouch(R.id.btn_restart)
+    public boolean rebtnOnTouch(MotionEvent motionEvent) {
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+            restartBtn.setAlpha(0.8f);
+        } else if(motionEvent.getAction() == MotionEvent.ACTION_MOVE){
+        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP){
+            restartBtn.setAlpha(1.0f);
         }
         return false;
     }
@@ -423,10 +407,44 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(!ProcessUtils.findModule("zygote","libInjectModule.so")){
-            Shell.Sync.su(new String[]{"cp -Rf /sdcard/inject_x86/* /data/local/tmp", "rm -rf /sdcard/inject_x86/", "rm -f /sdcard/inject_x86.zip",
-                    "chmod 777 /data/local/tmp/inject", "chmod 777 /data/local/tmp/libInjectModule.so", "chmod 777 /data/local/tmp/libQdzElf.so",
-                    "chmod 755 /data/local/tmp/inject.cfg"});
+            if("x86".equals(CPU_ABI)) {
+                Shell.Sync.su(new String[]{"cp -Rf /sdcard/inject_x86/* /data/local/tmp", "rm -rf /sdcard/inject_x86/", "rm -f /sdcard/inject_x86.zip",
+                        "chmod 777 /data/local/tmp/inject", "chmod 777 /data/local/tmp/libInjectModule.so", "chmod 777 /data/local/tmp/libQdzElf.so",
+                        "chmod 755 /data/local/tmp/inject.cfg"});
+            }else {
+                Shell.Sync.su(new String[]{"cp -Rf /sdcard/inject_armv7a/* /data/local/tmp", "rm -rf /sdcard/inject_armv7a/", "rm -f /sdcard/inject_armv7a.zip",
+                        "chmod 777 /data/local/tmp/inject", "chmod 777 /data/local/tmp/libInjectModule.so", "chmod 777 /data/local/tmp/libQdzElf.so",
+                        "chmod 755 /data/local/tmp/inject.cfg"});
+            }
             Log.e("inject",Shell.Sync.su("/data/local/tmp/inject").toString());
         }
+    }
+
+    public static boolean isServiceRunning(Context mContext, String className) {
+        boolean isRunning = false;
+        ActivityManager activityManager = (ActivityManager)
+                mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> serviceList
+                = activityManager.getRunningServices(30);
+        if (!(serviceList.size()>0)) {
+            return false;
+        }
+        for (int i=0; i<serviceList.size(); i++) {
+            if (serviceList.get(i).service.getClassName().equals(className) == true) {
+                isRunning = true;
+                break;
+            }
+        }
+        return isRunning;
+    }
+
+    /**
+     * 圆圈加载进度的 dialog
+     */
+    private void showWaiting() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("腳本加载中...");
+        progressDialog.setIndeterminate(true);// 是否形成一个加载动画  true表示不明确加载进度形成转圈动画  false 表示明确加载进度
+        progressDialog.setCancelable(false);//点击返回键或者dialog四周是否关闭dialog  true表示可以关闭 false表示不可关闭
     }
 }
