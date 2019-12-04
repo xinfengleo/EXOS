@@ -67,16 +67,15 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
     private ConsoleHelper consoleHelper;
     private ImageView pauseView;
     private LinearLayout settingWindow;
-    private SharedPreferences sharedPreferences;
     private final static String CONFIG_PATH="/sdcard/wmsj";
     private AuthService authService;
     private String 使用卡號 = "";
     private FloatingViewService self;
     private View tap1View,tap2View,tap3View,tabMainView;
     private RadioGroupExd selectShuatu,xuankashu;
-    private LinearLayout qianghuaben,jinhuaben,zhuangbeirenwu,bosszhan,llCailiaoben,llJinbiben,llBanzidongzhuxian,llShuahaogandu,llZidongjianmiezhan,llJierihuodong;
+    private LinearLayout qianghuaben,jinhuaben,zhuangbeirenwu,llCailiaoben,llJinbiben,llBanzidongzhuxian,llShuahaogandu,llZidongjianmiezhan,llJierihuodong,llBosszhan;
     private LinearLayout yizhangka,liangzhangka,sanzhangka,llMeirirenwu,llJieshouyaoqing;
-    private CheckBoxEx cbCailiaoben,cbJinbiben,cbShuahaogandu,cbBanzidongzhuxian,cbZidongjianmiezhan,cbMeirirenuw,cbJierihuodong,cbJieshouyaoqing;
+    private CheckBoxEx cbCailiaoben,cbJinbiben,cbShuahaogandu,cbBanzidongzhuxian,cbBossZhan,cbZidongjianmiezhan,cbMeirirenuw,cbJierihuodong,cbJieshouyaoqing;
     private ScrollView svMain;
 
     @Override
@@ -93,7 +92,6 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         qianghuaben = tap3View.findViewById(R.id.qianghuaben);
         jinhuaben = tap3View.findViewById(R.id.jinhuaben);
         zhuangbeirenwu = tap3View.findViewById(R.id.zhuangbeirenwu);
-        bosszhan = tap3View.findViewById(R.id.BOSSzhan);
         xuankashu = tap1View.findViewById(R.id.shuachushi_xuankashu);
         yizhangka = tap1View.findViewById(R.id.shuachushi_yizhangka);
         liangzhangka = tap1View.findViewById(R.id.shuachushi_liangzhangka);
@@ -102,7 +100,8 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         llJinbiben = tap2View.findViewById(R.id.ll_jinbiben);
         llShuahaogandu = tap2View.findViewById(R.id.ll_shuahaogandu);
         llBanzidongzhuxian = tap2View.findViewById(R.id.ll_banzidongzhuxian);
-        llZidongjianmiezhan = tap3View.findViewById(R.id.ll_zidongjianmiezhan);
+        llBosszhan = tap2View.findViewById(R.id.ll_bosszhan);
+        llZidongjianmiezhan = tap2View.findViewById(R.id.ll_zidongjianmiezhan);
         llMeirirenwu = tap2View.findViewById(R.id.ll_meirirenwu);
         llJierihuodong = tap2View.findViewById(R.id.ll_jierihuodong);
         llJieshouyaoqing = tap2View.findViewById(R.id.ll_jieshouyaoqing);
@@ -110,7 +109,8 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         cbJinbiben = tap2View.findViewById(R.id.cb_jinbiben);
         cbShuahaogandu = tap2View.findViewById(R.id.cb_shuahaogandu);
         cbBanzidongzhuxian = tap2View.findViewById(R.id.cb_banzidongzhuxian);
-        cbZidongjianmiezhan = tap3View.findViewById(R.id.cb_zidongjianmiezhan);
+        cbBossZhan = tap2View.findViewById(R.id.cb_bosszhan);
+        cbZidongjianmiezhan = tap2View.findViewById(R.id.cb_zidongjianmiezhan);
         cbJierihuodong = tap2View.findViewById(R.id.cb_jierihuodong);
         cbMeirirenuw = tap2View.findViewById(R.id.cb_meirirenuw);
         cbJieshouyaoqing = tap2View.findViewById(R.id.cb_jieshouyaoqing);
@@ -130,6 +130,12 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
             llCailiaoben.setVisibility(VISIBLE);
         }else{
             llCailiaoben.setVisibility(GONE);
+        }
+
+        if (cbBossZhan.isChecked()){
+            llBosszhan.setVisibility(VISIBLE);
+        }else{
+            llBosszhan.setVisibility(GONE);
         }
 
         if (cbJieshouyaoqing.isChecked()){
@@ -177,31 +183,21 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
                 qianghuaben.setVisibility(VISIBLE);
                 jinhuaben.setVisibility(GONE);
                 zhuangbeirenwu.setVisibility(GONE);
-                bosszhan.setVisibility(GONE);
                 break;
             case 1:
                 qianghuaben.setVisibility(GONE);
                 jinhuaben.setVisibility(VISIBLE);
                 zhuangbeirenwu.setVisibility(GONE);
-                bosszhan.setVisibility(GONE);
                 break;
             case 2:
                 qianghuaben.setVisibility(GONE);
                 jinhuaben.setVisibility(GONE);
                 zhuangbeirenwu.setVisibility(VISIBLE);
-                bosszhan.setVisibility(GONE);
-                break;
-            case 3:
-                qianghuaben.setVisibility(GONE);
-                jinhuaben.setVisibility(GONE);
-                zhuangbeirenwu.setVisibility(GONE);
-                bosszhan.setVisibility(VISIBLE);
                 break;
             default:
                 qianghuaben.setVisibility(VISIBLE);
                 jinhuaben.setVisibility(GONE);
                 zhuangbeirenwu.setVisibility(GONE);
-                bosszhan.setVisibility(GONE);
                 break;
         }
         selectShuatu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -212,25 +208,16 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
                         qianghuaben.setVisibility(VISIBLE);
                         jinhuaben.setVisibility(GONE);
                         zhuangbeirenwu.setVisibility(GONE);
-                        bosszhan.setVisibility(GONE);
                         break;
                     case 1:
                         qianghuaben.setVisibility(GONE);
                         jinhuaben.setVisibility(VISIBLE);
                         zhuangbeirenwu.setVisibility(GONE);
-                        bosszhan.setVisibility(GONE);
                         break;
                     case 2:
                         qianghuaben.setVisibility(GONE);
                         jinhuaben.setVisibility(GONE);
                         zhuangbeirenwu.setVisibility(VISIBLE);
-                        bosszhan.setVisibility(GONE);
-                        break;
-                    case 3:
-                        qianghuaben.setVisibility(GONE);
-                        jinhuaben.setVisibility(GONE);
-                        zhuangbeirenwu.setVisibility(GONE);
-                        bosszhan.setVisibility(VISIBLE);
                         break;
                 }
             }
@@ -286,6 +273,16 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
                     llCailiaoben.setVisibility(VISIBLE);
                 }else{
                     llCailiaoben.setVisibility(GONE);
+                }
+            }
+        });
+        cbBossZhan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    llBosszhan.setVisibility(VISIBLE);
+                }else{
+                    llBosszhan.setVisibility(GONE);
                 }
             }
         });
@@ -377,7 +374,6 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         hudManage=HUDManage.getInstance();
         authService= AuthService.getInstance();
         authService.init(getApplicationContext(),"","",AUTH_BASE_URL,900,"0619",sKey, ivParameter);
-        sharedPreferences= getApplicationContext().getSharedPreferences("PREF_SETTING", 0);
 
         Notification notification=new NotificationCompat.Builder(this,"mzbot")
                 .setContentText("夢幻模擬戰助手")
