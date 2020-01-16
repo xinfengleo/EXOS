@@ -244,6 +244,7 @@ public abstract class SuperScriptThread extends BaseScriptThread {
 
 
     protected boolean execTask(String layerName,TaskAction taskAction) {
+        publicUnitName = "無操作";
         if (StringUtils.isEmpty(layerName)) {
             return false;
         }
@@ -456,8 +457,8 @@ public abstract class SuperScriptThread extends BaseScriptThread {
             lastLayerName=result;
             if(!result.equals("未知頁面")){
                 endWait.clear();
-                slideNum.clear();
             }
+            slideNum.clear();
         }
         return result;
     }
@@ -466,31 +467,13 @@ public abstract class SuperScriptThread extends BaseScriptThread {
         new Handler(mContext.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                hudManage.showHUD("move", text, 13, 200, 20, 0, 1209, "#ffffff","#80000000",0);
-            }
-        });
-    }
-
-    protected void showNumInfo(String text) {
-        new Handler(mContext.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                hudManage.showHUD("num", text, 13, 50, 20, 619, 1209, "#ffffff","#80000000",0);
-            }
-        });
-    }
-
-    protected void showDiaInfo(String text) {
-        new Handler(mContext.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                hudManage.showHUD("diamond", text, 13, 50, 20, 669, 1209, "#ffffff","#80000000",0);
+                hudManage.showHUD("move", text, 13, 200, 20, 0, 649, "#ffffff","#80000000",0);
             }
         });
     }
 
     protected void showHUDInfo(String text) {
-        showHUDInfo(text, 13, 200, 20, 0, 1189, "#ffffff", "#80000000", 0);
+        showHUDInfo(text, 13, 200, 20, 0, 629, "#ffffff", "#80000000", 0);
     }
 
     protected void showHUDInfo(String text, Integer size, Integer width, Integer height, Integer x, Integer y, String color, String bg, Integer pos) {

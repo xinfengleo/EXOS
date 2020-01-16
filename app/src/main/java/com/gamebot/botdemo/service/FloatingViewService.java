@@ -1,11 +1,8 @@
 package com.gamebot.botdemo.service;
 
 import android.app.Notification;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
-import android.renderscript.Script;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -15,20 +12,15 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
-import android.widget.ScrollView;
 
 import com.fauth.library.core.AuthService;
 import com.fauth.library.entity.AuthResult;
-import com.fauth.library.utils.Preference;
 import com.gamebot.botdemo.R;
 import com.gamebot.botdemo.entity.MsgEvent;
 import com.gamebot.botdemo.script.ScriptThread;
-import com.gamebot.botdemo.script.SocketClient;
 import com.gamebot.botdemo.utils.ConsoleHelper;
 import com.gamebot.botdemo.utils.FileUtils;
 import com.gamebot.botdemo.utils.HUDManage;
-import com.gamebot.botdemo.view.RadioGroupExd;
 import com.gamebot.botdemo.view.SpinnerExd;
 import com.gamebot.sdk.GameBotConfig;
 import com.gamebot.sdk.client.BaseScriptThread;
@@ -49,7 +41,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
 
 import static android.view.View.GONE;
@@ -71,296 +62,158 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
     private AuthService authService;
     private String 使用卡號 = "";
     private FloatingViewService self;
-    private View tap1View,tap2View,tap3View,tabMainView;
-    private RadioGroupExd selectShuatu,xuankashu;
-    private LinearLayout qianghuaben,jinhuaben,zhuangbeirenwu,llCailiaoben,llJinbiben,llBanzidongzhuxian,llShuahaogandu,llZidongjianmiezhan,llJierihuodong,llBosszhan;
-    private LinearLayout yizhangka,liangzhangka,sanzhangka,llMeirirenwu,llJieshouyaoqing;
-    private CheckBoxEx cbCailiaoben,cbJinbiben,cbShuahaogandu,cbBanzidongzhuxian,cbBossZhan,cbZidongjianmiezhan,cbMeirirenuw,cbJierihuodong,cbJieshouyaoqing;
-    private ScrollView svMain;
+    private View tap2View,tabMainView;
+    private LinearLayout llTansuo,llJingyanben,llGouliangben,llDiJiJinbiben,llTaiyangben,llYueliangben,llXingxingben,llGaoJiJinbiben;
+    private CheckBoxEx cbTansuo,cbJingyanben,cbGouliangben,cbDiJiJinbiben,cbTaiyangben,cbYueliangben,cbXingxingben,cbGaojiJinbiben;
 
     @Override
     protected void createSettingView(LayoutInflater layoutInflater) {
         tabMainView = layoutInflater.inflate(R.layout.setting_main, null);
-        tap1View = layoutInflater.inflate(R.layout.setting_tab_one, null);
         tap2View = layoutInflater.inflate(R.layout.setting_tab_two, null);
-        tap3View = layoutInflater.inflate(R.layout.setting_tab_three, null);
         addView("使用說明", tabMainView);
-        addView("刷初始", tap1View);
         addView("日常", tap2View);
-        addView("掛機",tap3View);
-        selectShuatu = tap3View.findViewById(R.id.select_shuatu);
-        qianghuaben = tap3View.findViewById(R.id.qianghuaben);
-        jinhuaben = tap3View.findViewById(R.id.jinhuaben);
-        zhuangbeirenwu = tap3View.findViewById(R.id.zhuangbeirenwu);
-        xuankashu = tap1View.findViewById(R.id.shuachushi_xuankashu);
-        yizhangka = tap1View.findViewById(R.id.shuachushi_yizhangka);
-        liangzhangka = tap1View.findViewById(R.id.shuachushi_liangzhangka);
-        sanzhangka = tap1View.findViewById(R.id.shuachushi_sanzhangka);
-        llCailiaoben = tap2View.findViewById(R.id.ll_cailiaoben);
-        llJinbiben = tap2View.findViewById(R.id.ll_jinbiben);
-        llShuahaogandu = tap2View.findViewById(R.id.ll_shuahaogandu);
-        llBanzidongzhuxian = tap2View.findViewById(R.id.ll_banzidongzhuxian);
-        llBosszhan = tap2View.findViewById(R.id.ll_bosszhan);
-        llZidongjianmiezhan = tap2View.findViewById(R.id.ll_zidongjianmiezhan);
-        llMeirirenwu = tap2View.findViewById(R.id.ll_meirirenwu);
-        llJierihuodong = tap2View.findViewById(R.id.ll_jierihuodong);
-        llJieshouyaoqing = tap2View.findViewById(R.id.ll_jieshouyaoqing);
-        cbCailiaoben = tap2View.findViewById(R.id.cb_cailiaoben);
-        cbJinbiben = tap2View.findViewById(R.id.cb_jinbiben);
-        cbShuahaogandu = tap2View.findViewById(R.id.cb_shuahaogandu);
-        cbBanzidongzhuxian = tap2View.findViewById(R.id.cb_banzidongzhuxian);
-        cbBossZhan = tap2View.findViewById(R.id.cb_bosszhan);
-        cbZidongjianmiezhan = tap2View.findViewById(R.id.cb_zidongjianmiezhan);
-        cbJierihuodong = tap2View.findViewById(R.id.cb_jierihuodong);
-        cbMeirirenuw = tap2View.findViewById(R.id.cb_meirirenuw);
-        cbJieshouyaoqing = tap2View.findViewById(R.id.cb_jieshouyaoqing);
-        svMain = tap2View.findViewById(R.id.sv_main);
+        cbTansuo = tap2View.findViewById(R.id.cb_tansuo);
+        cbJingyanben = tap2View.findViewById(R.id.cb_jingyanben);
+        cbGouliangben = tap2View.findViewById(R.id.cb_gouliangben);
+        cbDiJiJinbiben = tap2View.findViewById(R.id.cb_dijijinbiben);
+        cbTaiyangben = tap2View.findViewById(R.id.cb_taiyangben);
+        cbYueliangben = tap2View.findViewById(R.id.cb_yueliangben);
+        cbXingxingben = tap2View.findViewById(R.id.cb_xingxingben);
+        cbGaojiJinbiben = tap2View.findViewById(R.id.cb_gaojijinbiben);
+        llTansuo = tap2View.findViewById(R.id.ll_tansuo);
+        llJingyanben = tap2View.findViewById(R.id.ll_jingyanben);
+        llGouliangben = tap2View.findViewById(R.id.ll_gouliangben);
+        llDiJiJinbiben = tap2View.findViewById(R.id.ll_dijijinbiben);
+        llTaiyangben = tap2View.findViewById(R.id.ll_taiyangben);
+        llYueliangben = tap2View.findViewById(R.id.ll_yueliangben);
+        llXingxingben = tap2View.findViewById(R.id.ll_xingxingben);
+        llGaoJiJinbiben = tap2View.findViewById(R.id.ll_gaojijinbiben);
         initEven();
     }
 
-
     @Override
     protected int getViewPosition() {
-        return 350;
+        return super.getViewPosition();
     }
 
-
     private void initEven(){
-        if (cbCailiaoben.isChecked()){
-            llCailiaoben.setVisibility(VISIBLE);
+        if (cbTansuo.isChecked()){
+            llTansuo.setVisibility(VISIBLE);
         }else{
-            llCailiaoben.setVisibility(GONE);
+            llTansuo.setVisibility(GONE);
         }
-
-        if (cbBossZhan.isChecked()){
-            llBosszhan.setVisibility(VISIBLE);
+        if (cbJingyanben.isChecked()){
+            llJingyanben.setVisibility(VISIBLE);
         }else{
-            llBosszhan.setVisibility(GONE);
+            llJingyanben.setVisibility(GONE);
         }
-
-        if (cbJieshouyaoqing.isChecked()){
-            llJieshouyaoqing.setVisibility(VISIBLE);
+        if (cbGouliangben.isChecked()){
+            llGouliangben.setVisibility(VISIBLE);
         }else{
-            llJieshouyaoqing.setVisibility(GONE);
+            llGouliangben.setVisibility(GONE);
         }
-
-        if (cbJinbiben.isChecked()){
-            llJinbiben.setVisibility(VISIBLE);
+        if (cbDiJiJinbiben.isChecked()){
+            llDiJiJinbiben.setVisibility(VISIBLE);
         }else{
-            llJinbiben.setVisibility(GONE);
+            llDiJiJinbiben.setVisibility(GONE);
         }
-
-        if (cbShuahaogandu.isChecked()){
-            llShuahaogandu.setVisibility(VISIBLE);
+        if (cbTaiyangben.isChecked()){
+            llTaiyangben.setVisibility(VISIBLE);
         }else{
-            llShuahaogandu.setVisibility(GONE);
+            llTaiyangben.setVisibility(GONE);
         }
-
-        if (cbBanzidongzhuxian.isChecked()){
-            llBanzidongzhuxian.setVisibility(VISIBLE);
+        if (cbYueliangben.isChecked()){
+            llYueliangben.setVisibility(VISIBLE);
         }else{
-            llBanzidongzhuxian.setVisibility(GONE);
+            llYueliangben.setVisibility(GONE);
         }
-
-        if (cbMeirirenuw.isChecked()){
-            llMeirirenwu.setVisibility(VISIBLE);
+        if (cbXingxingben.isChecked()){
+            llXingxingben.setVisibility(VISIBLE);
         }else{
-            llMeirirenwu.setVisibility(GONE);
+            llXingxingben.setVisibility(GONE);
         }
-        if (cbZidongjianmiezhan.isChecked()){
-            llZidongjianmiezhan.setVisibility(VISIBLE);
+        if (cbGaojiJinbiben.isChecked()){
+            llGaoJiJinbiben.setVisibility(VISIBLE);
         }else{
-            llZidongjianmiezhan.setVisibility(GONE);
+            llGaoJiJinbiben.setVisibility(GONE);
         }
-        if (cbJierihuodong.isChecked()){
-            llJierihuodong.setVisibility(VISIBLE);
-        }else{
-            llJierihuodong.setVisibility(GONE);
-        }
-
-        switch (selectShuatu.getIndex()){
-            case 0:
-                qianghuaben.setVisibility(VISIBLE);
-                jinhuaben.setVisibility(GONE);
-                zhuangbeirenwu.setVisibility(GONE);
-                break;
-            case 1:
-                qianghuaben.setVisibility(GONE);
-                jinhuaben.setVisibility(VISIBLE);
-                zhuangbeirenwu.setVisibility(GONE);
-                break;
-            case 2:
-                qianghuaben.setVisibility(GONE);
-                jinhuaben.setVisibility(GONE);
-                zhuangbeirenwu.setVisibility(VISIBLE);
-                break;
-            default:
-                qianghuaben.setVisibility(VISIBLE);
-                jinhuaben.setVisibility(GONE);
-                zhuangbeirenwu.setVisibility(GONE);
-                break;
-        }
-        selectShuatu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i){
-                    case 0:
-                        qianghuaben.setVisibility(VISIBLE);
-                        jinhuaben.setVisibility(GONE);
-                        zhuangbeirenwu.setVisibility(GONE);
-                        break;
-                    case 1:
-                        qianghuaben.setVisibility(GONE);
-                        jinhuaben.setVisibility(VISIBLE);
-                        zhuangbeirenwu.setVisibility(GONE);
-                        break;
-                    case 2:
-                        qianghuaben.setVisibility(GONE);
-                        jinhuaben.setVisibility(GONE);
-                        zhuangbeirenwu.setVisibility(VISIBLE);
-                        break;
-                }
-            }
-        });
-        switch (xuankashu.getIndex()){
-            case 0:
-                yizhangka.setVisibility(VISIBLE);
-                liangzhangka.setVisibility(GONE);
-                sanzhangka.setVisibility(GONE);
-                break;
-            case 1:
-                yizhangka.setVisibility(VISIBLE);
-                liangzhangka.setVisibility(VISIBLE);
-                sanzhangka.setVisibility(GONE);
-                break;
-            case 2:
-                yizhangka.setVisibility(VISIBLE);
-                liangzhangka.setVisibility(VISIBLE);
-                sanzhangka.setVisibility(VISIBLE);
-                break;
-            default:
-                yizhangka.setVisibility(VISIBLE);
-                liangzhangka.setVisibility(GONE);
-                sanzhangka.setVisibility(GONE);
-                break;
-        }
-        xuankashu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i){
-                    case 0:
-                        yizhangka.setVisibility(VISIBLE);
-                        liangzhangka.setVisibility(GONE);
-                        sanzhangka.setVisibility(GONE);
-                        break;
-                    case 1:
-                        yizhangka.setVisibility(VISIBLE);
-                        liangzhangka.setVisibility(VISIBLE);
-                        sanzhangka.setVisibility(GONE);
-                        break;
-                    case 2:
-                        yizhangka.setVisibility(VISIBLE);
-                        liangzhangka.setVisibility(VISIBLE);
-                        sanzhangka.setVisibility(VISIBLE);
-                        break;
-                }
-            }
-        });
-        cbCailiaoben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cbTansuo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
-                    llCailiaoben.setVisibility(VISIBLE);
+                    llTansuo.setVisibility(VISIBLE);
                 }else{
-                    llCailiaoben.setVisibility(GONE);
+                    llTansuo.setVisibility(GONE);
                 }
             }
         });
-        cbBossZhan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cbJingyanben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
-                    llBosszhan.setVisibility(VISIBLE);
+                    llJingyanben.setVisibility(VISIBLE);
                 }else{
-                    llBosszhan.setVisibility(GONE);
+                    llJingyanben.setVisibility(GONE);
                 }
             }
         });
-        cbJierihuodong.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cbGouliangben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
-                    llJierihuodong.setVisibility(VISIBLE);
+                    llGouliangben.setVisibility(VISIBLE);
                 }else{
-                    llJierihuodong.setVisibility(GONE);
+                    llGouliangben.setVisibility(GONE);
                 }
             }
         });
-        cbJinbiben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cbDiJiJinbiben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
-                    llJinbiben.setVisibility(VISIBLE);
+                    llDiJiJinbiben.setVisibility(VISIBLE);
                 }else{
-                    llJinbiben.setVisibility(GONE);
+                    llDiJiJinbiben.setVisibility(GONE);
                 }
             }
         });
-        cbJieshouyaoqing.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cbTaiyangben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
-                    llJieshouyaoqing.setVisibility(VISIBLE);
+                    llTaiyangben.setVisibility(VISIBLE);
                 }else{
-                    llJieshouyaoqing.setVisibility(GONE);
+                    llTaiyangben.setVisibility(GONE);
                 }
             }
         });
-        cbMeirirenuw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cbYueliangben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
-                    llMeirirenwu.setVisibility(VISIBLE);
-                    svMain.post(new Runnable() {
-                        public void run() {
-                            svMain.fullScroll(View.FOCUS_DOWN);
-                        }
-                    });
+                    llYueliangben.setVisibility(VISIBLE);
                 }else{
-                    llMeirirenwu.setVisibility(GONE);
+                    llYueliangben.setVisibility(GONE);
                 }
             }
         });
-
-        cbShuahaogandu.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cbXingxingben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
-                    llShuahaogandu.setVisibility(VISIBLE);
+                    llXingxingben.setVisibility(VISIBLE);
                 }else{
-                    llShuahaogandu.setVisibility(GONE);
+                    llXingxingben.setVisibility(GONE);
                 }
             }
         });
-
-        cbBanzidongzhuxian.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cbGaojiJinbiben.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
-                    llBanzidongzhuxian.setVisibility(VISIBLE);
+                    llGaoJiJinbiben.setVisibility(VISIBLE);
                 }else{
-                    llBanzidongzhuxian.setVisibility(GONE);
-                }
-            }
-        });
-
-        cbZidongjianmiezhan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
-                    llZidongjianmiezhan.setVisibility(VISIBLE);
-                }else{
-                    llZidongjianmiezhan.setVisibility(GONE);
+                    llGaoJiJinbiben.setVisibility(GONE);
                 }
             }
         });
@@ -376,8 +229,8 @@ public class FloatingViewService extends BaseFloatingViewService implements Base
         authService.init(getApplicationContext(),"","",AUTH_BASE_URL,900,"0619",sKey, ivParameter);
 
         Notification notification=new NotificationCompat.Builder(this,"mzbot")
-                .setContentText("夢幻模擬戰助手")
-                .setContentText("夢幻模擬戰助手運行中")
+                .setContentText("exos heroes助手")
+                .setContentText("exos heroes助手運行中")
                 .setSmallIcon(R.mipmap.ic_launcher).build();
         int NOTIFICATION_ID=14545;
         startForeground(NOTIFICATION_ID,notification);

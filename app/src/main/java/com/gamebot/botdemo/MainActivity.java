@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         versionText.setText("版本："+Utils.getLocalVersionName(this));
         checkScreenWH();
-        initSocket();
         authService=AuthService.getInstance();
         rlMain = (RelativeLayout)findViewById(R.id.rl_main);
         if (isServiceRunning(this,"com.gamebot.botdemo.service.FloatingViewService")){
@@ -123,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void checkVersion() {
-
         OkHttpClient okHttpClient = new OkHttpClient.Builder().readTimeout(20, TimeUnit.SECONDS).build();
         final Request request = new Request.Builder()
                 .url(CHECK_VERSION_URL)
@@ -395,29 +393,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-    }
-    private void initSocket(){
-        String CPU_ABI = android.os.Build.CPU_ABI;
-        if("x86".equals(CPU_ABI)){
-            FileUtils.copyFilesFromRaw(getApplicationContext(), R.raw.inject_x86, "inject_x86.zip", "/sdcard/");
-            ZipUtil.unpack(new File("/sdcard/inject_x86.zip"), new File("/sdcard/inject_x86"));
-        }else {
-            FileUtils.copyFilesFromRaw(getApplicationContext(), R.raw.inject_armv7a, "inject_armv7a.zip", "/sdcard/");
-            ZipUtil.unpack(new File("/sdcard/inject_armv7a.zip"), new File("/sdcard/inject_armv7a"));
-        }
-
-        if(!ProcessUtils.findModule("zygote","libInjectModule.so")){
-            if("x86".equals(CPU_ABI)) {
-                Shell.Sync.su(new String[]{"cp -Rf /sdcard/inject_x86/* /data/local/tmp", "rm -rf /sdcard/inject_x86/", "rm -f /sdcard/inject_x86.zip",
-                        "chmod 777 /data/local/tmp/inject", "chmod 777 /data/local/tmp/libInjectModule.so", "chmod 777 /data/local/tmp/libQdzElf.so",
-                        "chmod 755 /data/local/tmp/inject.cfg"});
-            }else {
-                Shell.Sync.su(new String[]{"cp -Rf /sdcard/inject_armv7a/* /data/local/tmp", "rm -rf /sdcard/inject_armv7a/", "rm -f /sdcard/inject_armv7a.zip",
-                        "chmod 777 /data/local/tmp/inject", "chmod 777 /data/local/tmp/libInjectModule.so", "chmod 777 /data/local/tmp/libQdzElf.so",
-                        "chmod 755 /data/local/tmp/inject.cfg"});
-            }
-            Log.e("inject",Shell.Sync.su("/data/local/tmp/inject").toString());
-        }
     }
 
     public static boolean isServiceRunning(Context mContext, String className) {
